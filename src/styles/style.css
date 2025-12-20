@@ -1,0 +1,73 @@
+/* we use :root pseudo-class to target highest level DOM element to be able to declare CSS custom properties */
+:root {
+    font-size: 62.5%; /*basically makes 1 rem = 10px*/
+    /* most preferred approach would be to use scss functions to convert px values to rem keeping default size as 16px, would implement it later */
+    /* a unitless value is preferred for better inheritance, now the vertical spacing between the lines is 1.5 * parent's font-size  */
+    line-height: 1.5; 
+    /* a css custom-property is used to specify system font-stack for faster loading */
+    --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+}
+
+body {
+    /* default style is 16px = 1.6rem * 10 px */
+    font-size: 1.6rem;
+    /* WebKit-based browsers like Chrome, Safari, Edge on macOS  */
+    /* to make the font thinner and lighter */
+    -webkit-font-smoothing: antialiased;
+    /* background-color: aquamarine; */
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+img, picture, svg, video, canvas {
+    /* block */
+    display: block;
+    /* equivalent to max-width but also applicable for vertical flow, ensures the content does not overflow parent container and if the image is too large it will scale-down to fit the container  */
+    max-inline-size: 100%;
+    /* max-inline-size is a modern alternative to max-width and for maximum compatibility use of both is preferred */
+    max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+    /* for more balanced text-wrap ensures only single word is not left on the last line */
+    text-wrap: balance;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+p {
+    text-wrap: pretty;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+ol[role="list"], ul[role="list"] {
+    list-style: none;
+    padding-inline: 0;
+}
+
+/* smoothly animating height change */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/*
+  12. Create a stacking context for React/Next.js apps.
+*/
+#root, #__next {
+  isolation: isolate;
+}

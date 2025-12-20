@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+# Build output -- as only I need it
+dist/
+
+# OS metadata
+.DS_store
+
+# environmental variables
+.env 
