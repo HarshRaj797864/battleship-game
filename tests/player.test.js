@@ -1,7 +1,6 @@
 import { getPlayer } from "../src/modules/player";
-// increase in complexity hence why importing other modules
-import { getGameBoard } from "../src/modules/gameboard";
-import { Ship } from "../src/modules/gameboard";
+import { createGameboard } from "../src/modules/gameboard";
+import { Ship } from "../src/modules/ship";
 
 describe("testing player module", () => {
   let p;
@@ -9,7 +8,6 @@ describe("testing player module", () => {
 
   beforeEach(() => {
     p = getPlayer("Harsh");
-
     c = getPlayer("Raj", "computer");
   });
 
@@ -64,22 +62,17 @@ describe("testing player module", () => {
       "%s method returns whatever the gameBoard returns",
       (input) => {
         if (input === "attack") {
-          // so we are creating this mockBoard to decouple the tests
-          // this will result in error cuz attack method returns enemyBoard.receiveAttack() so we need to wrap
-          // const mockBoard = {receiveAttack: true};
-          // this works fine but we can't verify whether this method was called with the help of special matchers
-          // const mockBoard = {receiveAttack: () => true};
           result = p.attack(mockBoard, 1, 1);
           expect(mockBoard.receiveAttack).toHaveBeenCalledWith(1, 1);
         } else {
           result = c.randomAttack(mockBoard);
         }
         expect(result).toBe(true);
-
         expect(mockBoard.receiveAttack).toHaveBeenCalledTimes(1);
       }
     );
   });
+
   test("Computer player can't attack same coordinates twice", () => {
     let hasDuplicate = false;
     for (let index = 0; index < 100; index++) {
@@ -91,6 +84,7 @@ describe("testing player module", () => {
     }
     expect(hasDuplicate).toBe(false);
   });
+
   test("after 100 iterations randomAttack returns null", () => {
     for (let index = 0; index < 10; index++) {
       for (let j = 0; j < 10; j++) {
@@ -99,15 +93,16 @@ describe("testing player module", () => {
     }
     expect(c.randomAttack(p.board)).toBeNull();
   });
+
   test("randomAttack attacks adjacent coords after a hit", () => {
     const mockBoard = {
       receiveAttack: jest.fn().mockReturnValueOnce(true),
     };
     c.randomAttack(mockBoard);
     const [firstX, firstY] = mockBoard.receiveAttack.mock.calls[0];
-    // calling randomAttack again
+
     c.randomAttack(mockBoard);
-    // getting the coordinates of the 2nd attack
+
     const secondCoordinate = mockBoard.receiveAttack.mock.calls[1];
     const [x, y] = secondCoordinate;
 
@@ -119,5 +114,49 @@ describe("testing player module", () => {
     ];
     expect(validNeighbors).toContainEqual([x, y]);
   });
-  test("randomAttack follows horizontal line after 2 hits", () => {});
+
+  describe("randomAttack determines axis after 2 hits", () => {
+    let enemyBoard;
+    let ship;
+
+    beforeEach(() => {
+      enemyBoard = createGameboard();
+      ship = new Ship(3);
+    });
+
+    test.each([
+      { orientation: "horizontal", x: 5, y: 5, isVert: false },
+      { orientation: "vertical", x: 5, y: 5, isVert: true },
+    ])(
+      "randomAttack follows $orientation line after 2 hits",
+      ({ isVert, x, y }) => {
+        enemyBoard.placeShip(ship, x, y, isVert);
+
+        while (true) {
+          c.randomAttack(enemyBoard);
+          const lastShot = enemyBoard.getAttackedShots().at(-1);
+          if (lastShot.x === x && lastShot.y === y) break;
+        }
+
+        let secondHit = null;
+        while (!secondHit) {
+          const isHit = c.randomAttack(enemyBoard);
+          if (isHit === true) {
+            secondHit = enemyBoard.getAttackedShots().at(-1);
+          }
+        }
+
+        c.randomAttack(enemyBoard);
+        const thirdShot = enemyBoard.getAttackedShots().at(-1);
+
+        if (!isVert) {
+          expect(thirdShot.x).toBe(x);
+          expect([3, 4, 6, 7]).toContain(thirdShot.y);
+        } else {
+          expect(thirdShot.y).toBe(y);
+          expect([3, 4, 6, 7]).toContain(thirdShot.x);
+        }
+      }
+    );
+  });
 });
