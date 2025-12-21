@@ -38,12 +38,12 @@ const createGameboard = () => {
       if (grid[x][y] !== null) {
         grid[x][y].hit();
         attackedShots.push({ x, y, missed: false });
-      } else {
-        attackedShots.push({ x, y, missed: true });
+        return true;
       }
-      return true;
+      attackedShots.push({ x, y, missed: true });
+      return false;
     }
-    return false;
+    return null;
   };
 
   const allShipSunk = () => {

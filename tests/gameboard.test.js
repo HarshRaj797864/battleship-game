@@ -65,6 +65,15 @@ describe("gameBoard", () => {
       "Cannot place: Ship gone out of bound"
     );
   });
+  test("ships can be placed on the boundary edges", () => {
+    const b = createGameboard();
+    const ship = new Ship(2);
+
+    expect(() => b.placeShip(ship, 0, 8)).not.toThrow();
+
+    expect(() => b.placeShip(ship, 8, 0, true)).not.toThrow();
+  });
+
   test("receiveAttack increments a ship's hits", () => {
     const b = createGameboard();
     const ship = new Ship(3);
@@ -104,7 +113,32 @@ describe("gameBoard", () => {
     b.receiveAttack(1, 0);
     expect(b.getGrid()[1][0].hits).toEqual(1);
   });
+  test("receiveAttack returns true on hit only", () => {
+    const b = createGameboard();
+    const ship = new Ship(3);
+    b.placeShip(ship, 0, 0, true);
+    expect(b.receiveAttack(0, 0)).toEqual(true);
+    expect(b.receiveAttack(0, 1)).not.toEqual(true);
+  });
 
+  test("receiveAttack returns null on duplicate", () => {
+    const b = createGameboard();
+    const ship = new Ship(3);
+    b.placeShip(ship, 0, 0, true);
+    expect(b.receiveAttack(0, 0)).toEqual(true);
+    expect(b.receiveAttack(0, 0)).toEqual(null);
+  });
+
+  test("shot history correctly records hits vs misses", () => {
+    const b = createGameboard();
+    const ship = new Ship(1);
+    b.placeShip(ship, 0, 0);
+    b.receiveAttack(0, 0);
+    b.receiveAttack(1, 1);
+    const shots = b.getAttackedShots();
+    expect(shots).toContainEqual({ x: 0, y: 0, missed: false });
+    expect(shots).toContainEqual({ x: 1, y: 1, missed: true });
+  });
   describe("allShipSunk state tracking", () => {
     let b;
     beforeEach(() => {

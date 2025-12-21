@@ -78,13 +78,15 @@ describe("testing player module", () => {
     );
   });
   test("Computer player can't attack same coordinates twice", () => {
-    let attackedSameCoords = false;
-    for (let index = 0; index < 10; index++) {
-      for (let j = 0; j < 10; j++) {
-        attackedSameCoords = !c.randomAttack(p.board);
+    let hasDuplicate = false;
+    for (let index = 0; index < 100; index++) {
+      const result = c.randomAttack(p.board);
+      if (result === null) {
+        hasDuplicate = true;
+        break;
       }
     }
-    expect(attackedSameCoords).toBe(false);
+    expect(hasDuplicate).toBe(false);
   });
   test("after 100 iterations randomAttack returns null", () => {
     for (let index = 0; index < 10; index++) {
