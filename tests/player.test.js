@@ -1,4 +1,7 @@
 import { getPlayer } from "../src/modules/player";
+// increase in complexity hence why importing other modules
+import { getGameBoard } from "../src/modules/gameboard";
+import { Ship } from "../src/modules/gameboard";
 
 describe("testing player module", () => {
   let p;
@@ -96,8 +99,25 @@ describe("testing player module", () => {
     }
     expect(c.randomAttack(p.board)).toBeNull();
   });
-  //   test("random attack on hit goes for adjacent cells first", () => {
-  //     const mockBoard = { receiveAttack: jest.fn(() => true) };
+  test("randomAttack attacks adjacent coords after a hit", () => {
+    const mockBoard = {
+      receiveAttack: jest.fn().mockReturnValueOnce(true),
+    };
+    c.randomAttack(mockBoard);
+    const [firstX, firstY] = mockBoard.receiveAttack.mock.calls[0];
+    // calling randomAttack again
+    c.randomAttack(mockBoard);
+    // getting the coordinates of the 2nd attack
+    const secondCoordinate = mockBoard.receiveAttack.mock.calls[1];
+    const [x, y] = secondCoordinate;
 
-  //   });
+    const validNeighbors = [
+      [firstX + 1, firstY],
+      [firstX - 1, firstY],
+      [firstX, firstY + 1],
+      [firstX, firstY - 1],
+    ];
+    expect(validNeighbors).toContainEqual([x, y]);
+  });
+  test("randomAttack follows horizontal line after 2 hits", () => {});
 });

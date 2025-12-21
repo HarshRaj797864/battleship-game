@@ -14,11 +14,38 @@ const getPlayer = (n, t = "human") => {
   };
 
   const randomPool = [];
+  const targetQueue = [];
 
   const randomAttack = (enemyBoard) => {
     if (randomPool.length === 0) return null;
-    const { x, y } = randomPool.pop();
-    return enemyBoard.receiveAttack(x, y);
+    let target;
+    if (targetQueue.length !== 0) {
+      target = targetQueue.shift();
+      const idx = randomPool.findIndex(
+        (m) => m.x === target.x && m.y === target.y
+      );
+      if (idx !== -1) randomPool.splice(idx, 1);
+    } else {
+      target = randomPool.pop();
+    }
+
+    const result = enemyBoard.receiveAttack(target.x, target.y);
+    if (result) {
+      const neighbors = [
+        { x: target.x + 1, y: target.y },
+        { x: target.x, y: target.y + 1 },
+        { x: target.x - 1, y: target.y },
+        { x: target.x, y: target.y - 1 },
+      ];
+      neighbors.forEach((n) => {
+        const inPool = randomPool.some((m) => m.x === n.x && m.y === n.y);
+        if (n.x >= 0 && n.x < 10 && n.y >= 0 && n.y < 10 && inPool) {
+          const inQueue = targetQueue.some((m) => m.x === n.x && m.y === n.y);
+          if (!inQueue) targetQueue.push(n);
+        }
+      });
+    }
+    return result;
   };
 
   if (type === "human") publicInterface.attack = attack;
