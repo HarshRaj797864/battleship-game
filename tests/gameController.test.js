@@ -8,6 +8,9 @@ jest.mock("../src/modules/DomManager", () => ({
   DomManager: {
     renderBoard: jest.fn(),
     updateCell: jest.fn(),
+    disableBoard: jest.fn(),
+    enableBoard: jest.fn(),
+    bindEvents: jest.fn(),
   },
 }));
 
@@ -187,6 +190,60 @@ describe("tests for gameController", () => {
         expect(state.isGameOver).toBe(true);
         expect(state.activePlayer).toBe(state.playerOne);
         expect(gameController.playComputerTurn).not.toHaveBeenCalled();
+      });
+    });
+  });
+  describe("computer's turn", () => {
+    let state;
+    test("playComputerTurn sets isProcessing to true and disables the computer-board", () => {
+      gameController.initializeGame("Harsh");
+      state = gameController.state;
+      gameController.playComputerTurn();
+      expect(state.isProcessing).toEqual(true);
+      expect(DomManager.disableBoard).toHaveBeenCalled();
+    });
+
+    describe("computer's turn inside timer", () => {
+      let attackSpy, coordsSpy, allShipSunkSpy;
+      beforeEach(() => {
+        jest.clearAllMocks();
+        jest.useFakeTimers();
+        gameController.initializeGame("Harsh");
+        state = gameController.state;
+        attackSpy = jest
+          .spyOn(state.playerOne.board, "receiveAttack")
+          .mockReturnValue(true);
+        const mockAttackedShots = [{ x: 5, y: 5, missed: false }];
+        coordsSpy = jest
+          .spyOn(state.playerOne.board, "getAttackedShots")
+          .mockReturnValue(mockAttackedShots);
+        allShipSunkSpy = jest
+          .spyOn(state.playerOne.board, "allShipSunk")
+          .mockReturnValue(false);
+        gameController.playComputerTurn();
+        jest.runAllTimers();
+      });
+      afterEach(() => {
+        jest.useRealTimers();
+        jest.restoreAllMocks();
+      });
+
+      test("playComputerTurn sets timeout and calls randomAttack and receives the position", () => {
+        expect(attackSpy).toHaveBeenCalled();
+        expect(coordsSpy).toHaveBeenCalled();
+        const returnedValue = coordsSpy.mock.results[0].value;
+        expect(returnedValue).toContainEqual({ x: 5, y: 5, missed: false });
+      });
+      test("UI updated", () => {
+        expect(DomManager.updateCell).toHaveBeenCalled();
+      });
+      test("check whether game is over", () => {
+        expect(allShipSunkSpy).toHaveBeenCalled();
+        const returnedValue = allShipSunkSpy.mock.results[0].value;
+        expect(returnedValue).toEqual(false);
+        expect(state.activePlayer).toBe(state.playerOne);
+        expect(state.isProcessing).toBe(false);
+        expect(DomManager.enableBoard).toHaveBeenCalled();
       });
     });
   });

@@ -32,7 +32,7 @@ export const gameController = (() => {
       }
     });
   };
-  const bindEvents = () => {};
+
   const initializeGame = (name) => {
     state.playerOne = getPlayer(name, "human");
     state.playerTwo = getPlayer("computer", "computer");
@@ -43,10 +43,34 @@ export const gameController = (() => {
     state.activePlayer = state.playerOne;
     state.isGameOver = false;
     state.isProcessing = false;
-    bindEvents();
+    DomManager.bindEvents("computer-board", playRound);
   };
   //   creating it early for the spy
-  const playComputerTurn = () => {};
+  const playComputerTurn = () => {
+    state.isProcessing = true;
+    DomManager.disableBoard("computer-board");
+    setTimeout(() => {
+      state.playerTwo.randomAttack(state.playerOne.board);
+      const coords = state.playerOne.board.getAttackedShots();
+      const shotStatus = coords.at(-1);
+      let ship;
+
+      if (shotStatus.missed === false) {
+        ship = state.playerOne.board.getShipAt(shotStatus.x, shotStatus.y);
+      }
+      DomManager.updateCell(
+        "player-board",
+        shotStatus.x,
+        shotStatus.y,
+        ship && ship.isSunk() ? coords : null
+      );
+      if (!state.playerOne.board.allShipSunk()) {
+        state.activePlayer = state.playerOne;
+        state.isProcessing = false;
+        DomManager.enableBoard("computer-board");
+      }
+    }, 800);
+  };
   const playRound = (x, y) => {
     if (
       state.isGameOver ||

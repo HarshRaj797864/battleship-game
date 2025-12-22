@@ -65,5 +65,16 @@ export const DomManager = (() => {
     const container = document.getElementById(containerId);
     container.classList.remove("disabled");
   };
-  return { renderBoard, updateCell, disableBoard, enableBoard };
+  const bindEvents = (containerId, handler) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.addEventListener("click", (e) => {
+      const x = e.target.dataset.x;
+      const y = e.target.dataset.y;
+      if (x !== undefined && y !== undefined) {
+        handler(parseInt(x), parseInt(y));
+      }
+    });
+  };
+  return { renderBoard, updateCell, disableBoard, enableBoard, bindEvents };
 })();
