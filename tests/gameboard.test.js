@@ -218,8 +218,13 @@ describe("gameBoard", () => {
     expect(coords).toContainEqual({ x: 1, y: 0 });
     expect(coords).not.toContainEqual({ x: 3, y: 4 });
   });
-  test.skip("just trying", () => {
-    const val = true;
-    expect(val).toEqual(false);
+  test("getShipAt ,a  helper function should successfully return ship object", () => {
+    const b = createGameboard();
+    const ship = new Ship(2);
+    b.placeShip(ship, 0, 0, true);
+    const coords = b.getShipCoordinates(ship);
+    coords.forEach((coord) => {
+      expect(b.getShipAt(coord.x, coord.y)).toBe(ship);
+    });
   });
 });

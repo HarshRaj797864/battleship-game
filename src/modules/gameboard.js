@@ -70,6 +70,15 @@ const createGameboard = () => {
     return coords;
   };
 
+  const getShipAt = (x, y) => {
+    return ships.find((ship) => {
+      const coords = getShipCoordinates(ship);
+      return coords.some((coord) => {
+        return coord.x === x && coord.y === y;
+      });
+    });
+  };
+
   return {
     getGrid,
     placeShip,
@@ -79,6 +88,7 @@ const createGameboard = () => {
     getMissedAttacks,
     getShips,
     getShipCoordinates,
+    getShipAt,
   };
 };
 
