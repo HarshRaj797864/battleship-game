@@ -37,9 +37,9 @@ const getPlayer = (n, t = "human") => {
         currentHunt = { origin: target, axis: null };
       } else if (currentHunt.axis === null) {
         if (target.x !== currentHunt.origin.x) {
-          currentHunt.axis = "horizontal";
-        } else if (target.y !== currentHunt.origin.y) {
           currentHunt.axis = "vertical";
+        } else if (target.y !== currentHunt.origin.y) {
+          currentHunt.axis = "horizontal";
         }
       }
 
@@ -76,7 +76,7 @@ const getPlayer = (n, t = "human") => {
         const ship = enemyBoard.getGrid()[target.x][target.y];
         if (ship && ship.isSunk()) {
           currentHunt = null;
-          targetQueue = [];
+          // targetQueue = [];
         }
       }
     }
