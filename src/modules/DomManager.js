@@ -52,7 +52,7 @@ export const DomManager = (() => {
         const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
         if (cell) cell.classList.add("hit");
       }
-    } else {
+    } else if (result === false) {
       const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
       cell.classList.add("miss");
     }
