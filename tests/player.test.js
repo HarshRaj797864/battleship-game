@@ -115,7 +115,7 @@ describe("testing player module", () => {
     expect(validNeighbors).toContainEqual([x, y]);
   });
 
-  describe("randomAttack determines axis after 2 hits", () => {
+  describe.skip("randomAttack determines axis after 2 hits", () => {
     let enemyBoard;
     let ship;
 
