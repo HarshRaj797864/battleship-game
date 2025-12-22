@@ -57,8 +57,19 @@ export const gameController = (() => {
 
     const attacked = state.playerOne.attack(state.playerTwo.board, x, y);
     if (attacked !== null) {
-      // if (attacked === true) {}
-      DomManager.updateCell("computer-board", x, y, attacked, null);
+      const ship = state.playerTwo.board.getShipAt(x, y);
+      let coords;
+      if (ship && ship.isSunk()) {
+        coords = state.playerTwo.board.getShipCoordinates(ship);
+      } else {
+        coords = null;
+      }
+
+      DomManager.updateCell("computer-board", x, y, attacked, coords);
+      if (state.playerTwo.board.allShipSunk()) {
+        state.isGameOver = true;
+        return;
+      }
       state.activePlayer = state.playerTwo;
       gameController.playComputerTurn();
     }

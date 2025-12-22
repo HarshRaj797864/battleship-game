@@ -11,6 +11,13 @@ jest.mock("../src/modules/DomManager", () => ({
   },
 }));
 
+// jest.mock("../src/modules/gameBoard", () => ({
+//   createGameBoard: {
+//     getShipAt: jest.fn(),
+//     getShipCoordinates: jest.fn(),
+//   },
+// }));
+
 describe("tests for gameController", () => {
   describe("tests for placeShipsRandomly", () => {
     let player, board, ships;
@@ -133,23 +140,54 @@ describe("tests for gameController", () => {
       expect(state.activePlayer).toBe(state.playerTwo);
       expect(gameController.playComputerTurn).toHaveBeenCalled();
     });
-    // test("playRound switch sides, call playComputerTurn, call UpdateCell with ship sunk logic on hit", () => {
-    //   const spy = jest
-    //     .spyOn(state.playerTwo.board, "receiveAttack")
-    //     .mockImplementation(() => false);
-    //   const spyBoard = jest.spyOn(state.playerTwo.board.)
-    //   gameController.playRound(5, 5);
-    //   expect(spy).toHaveBeenCalled();
-    //   expect(DomManager.updateCell).toHaveBeenCalledWith(
-    //     "computer-board",
-    //     5,
-    //     5,
-    //     true,
-    //     null
-    //   );
-    //   expect(state.activePlayer).toBe(state.playerTwo);
-    //   expect(gameController.playComputerTurn).toHaveBeenCalled();
-    // });
-    // test("playRound should also ");
+    describe("playRound - successful hits", () => {
+      let mockCoords;
+      let mockShip;
+
+      beforeEach(() => {
+        jest
+          .spyOn(state.playerTwo.board, "receiveAttack")
+          .mockReturnValue(true);
+
+        mockShip = { isSunk: () => true };
+        jest
+          .spyOn(state.playerTwo.board, "getShipAt")
+          .mockReturnValue(mockShip);
+
+        mockCoords = [
+          { x: 5, y: 5 },
+          { x: 5, y: 6 },
+        ];
+        jest
+          .spyOn(state.playerTwo.board, "getShipCoordinates")
+          .mockReturnValue(mockCoords);
+      });
+
+      test("standard hit: updates UI, switches sides, and calls computer turn", () => {
+        jest.spyOn(state.playerTwo.board, "allShipSunk").mockReturnValue(false);
+
+        gameController.playRound(5, 5);
+
+        expect(DomManager.updateCell).toHaveBeenCalledWith(
+          "computer-board",
+          5,
+          5,
+          true,
+          mockCoords
+        );
+        expect(state.activePlayer).toBe(state.playerTwo);
+        expect(gameController.playComputerTurn).toHaveBeenCalled();
+      });
+
+      test("winning hit: updates UI, but ends game and DOES NOT call computer turn", () => {
+        jest.spyOn(state.playerTwo.board, "allShipSunk").mockReturnValue(true);
+
+        gameController.playRound(5, 5);
+
+        expect(state.isGameOver).toBe(true);
+        expect(state.activePlayer).toBe(state.playerOne);
+        expect(gameController.playComputerTurn).not.toHaveBeenCalled();
+      });
+    });
   });
 });
