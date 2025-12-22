@@ -60,6 +60,16 @@ const createGameboard = () => {
 
   const getShips = () => [...ships];
 
+  const getShipCoordinates = (ship) => {
+    const coords = [];
+    grid.forEach((row, x) => {
+      row.forEach((cell, y) => {
+        if (cell === ship) coords.push({ x, y });
+      });
+    });
+    return coords;
+  };
+
   return {
     getGrid,
     placeShip,
@@ -68,6 +78,7 @@ const createGameboard = () => {
     allShipSunk,
     getMissedAttacks,
     getShips,
+    getShipCoordinates,
   };
 };
 

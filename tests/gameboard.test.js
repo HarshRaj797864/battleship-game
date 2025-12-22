@@ -207,4 +207,19 @@ describe("gameBoard", () => {
     expect(b.getShips()).toContainEqual(ship);
     expect(b.getShips()).toContainEqual(ship2);
   });
+  test("getShipCoordinates stores coordinates of every ship in the gameBoard", () => {
+    const b = createGameboard();
+    const ship = new Ship(3);
+    const ship2 = new Ship(2);
+    b.placeShip(ship, 0, 0, true);
+    b.placeShip(ship2, 3, 3);
+    const coords = b.getShipCoordinates(ship);
+    expect(coords.length).toEqual(3);
+    expect(coords).toContainEqual({ x: 1, y: 0 });
+    expect(coords).not.toContainEqual({ x: 3, y: 4 });
+  });
+  test.skip("just trying", () => {
+    const val = true;
+    expect(val).toEqual(false);
+  });
 });
