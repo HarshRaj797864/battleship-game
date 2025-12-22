@@ -36,17 +36,24 @@ export const DomManager = (() => {
     });
   };
   // optimization:- does not update entire board but the cell changed
-  const updateCell = (containerId, x, y, result, isSunk = false) => {
+  const updateCell = (containerId, x, y, result, shipCoords = null) => {
     const container = document.getElementById(containerId);
-    const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-    if (!cell) return;
 
     if (result === true) {
-      cell.classList.add("hit");
-      if (isSunk) {
-        cell.classList.add("sunk");
+      // shipCoords not null implies the ship sunk
+      if (shipCoords) {
+        shipCoords.forEach((coords) => {
+          const cell = container.querySelector(
+            `[data-x="${coords.x}"][data-y="${coords.y}"]`
+          );
+          if (cell) cell.classList.add("hit", "sunk");
+        });
+      } else {
+        const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+        if (cell) cell.classList.add("hit");
       }
-    } else if (result === false) {
+    } else {
+      const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
       cell.classList.add("miss");
     }
   };

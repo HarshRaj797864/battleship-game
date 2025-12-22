@@ -27,8 +27,14 @@ computerBoard.receiveAttack(0, 0);
 
 DomManager.renderBoard(playerBoard, "player-board", false);
 DomManager.renderBoard(computerBoard, "computer-board", true);
-DomManager.updateCell("computer-board", 2, 3, true, false);
-DomManager.updateCell("computer-board", 8, 8, true, true);
-DomManager.updateCell("computer-board", 9, 8, true, true);
+DomManager.updateCell("computer-board", 2, 3, true);
+DomManager.updateCell("computer-board", 8, 8, true);
+DomManager.updateCell(
+  "computer-board",
+  9,
+  8,
+  true,
+  computerBoard.getShipCoordinates(cPatrolBoat)
+);
 DomManager.disableBoard("computer-board");
 DomManager.enableBoard("computer-board");
