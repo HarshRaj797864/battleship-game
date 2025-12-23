@@ -82,20 +82,35 @@
     
 
     <div id="game-container" class="hidden">
-      <header>
-        <h1>BATTLESHIP</h1>
-      </header>
-      <div class="board-section">
-        <div class="board-wrapper">
-          <h2>FRIENDLY WATERS</h2>
-          <div class="board" id="player-board"></div>
-        </div>
-        <div class="board-wrapper">
-          <h2>ENEMY WATERS</h2>
-          <div class="board" id="computer-board"></div>
-        </div>
+  
+  <header class="game-header">
+    <h1 class="glitch-title">COMBAT MODE</h1>
+  </header>
+
+  <div class="battlefield">
+    
+    <div class="board-wrapper">
+      <div class="axis-controls">
+         <div class="axis-wrapper">
+           <button class="btn-tactical status-btn friendly">FRIENDLY WATERS</button>
+           <p class="click-hint" style="color: #00ff00;">>> SYSTEMS ONLINE <<</p>
+         </div>
       </div>
+      <div id="player-board" class="board tactical-board"></div>
     </div>
+
+    <div class="board-wrapper">
+      <div class="axis-controls">
+         <div class="axis-wrapper">
+           <button class="btn-tactical status-btn enemy">ENEMY WATERS</button>
+           <p class="click-hint" style="color: #ff0000;">>> TARGET LOCKED <<</p>
+         </div>
+      </div>
+      <div id="computer-board" class="board tactical-board"></div>
+    </div>
+
+  </div>
+</div>
     <dialog id="start-modal">
       <div class="modal-decoration ship-1"></div>
 

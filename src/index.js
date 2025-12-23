@@ -3,6 +3,7 @@ import "./styles/setupDnD.css";
 import "./styles/startScreen.css";
 import "./styles/modal.css";
 import "./styles/drag-drop.css";
+import "./styles/battlefield.css";
 import { ScreenController } from "./modules/ScreenController";
 
 document.addEventListener("DOMContentLoaded", () => {

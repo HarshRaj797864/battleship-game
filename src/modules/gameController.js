@@ -27,7 +27,7 @@ export const gameController = (() => {
       { name: "Submarine", length: 3 },
       { name: "Destroyer", length: 2 },
     ];
-    fleet.forEach((len) => {
+    fleet.forEach((shipData) => {
       let placed = false;
       let attempts = 0;
       while (!placed && attempts < 100) {
@@ -35,7 +35,9 @@ export const gameController = (() => {
         const y = Math.floor(Math.random() * 10);
         const isVertical = Math.random() < 0.5;
         try {
-          player.board.placeShip(new Ship(len), x, y, isVertical);
+          const newShip = new Ship(shipData.length);
+          newShip.name = shipData.name;
+          player.board.placeShip(newShip, x, y, isVertical);
           placed = true;
         } catch {
           attempts++;

@@ -1,0 +1,144 @@
+/* --- GAME SCREEN OVERHAUL --- */
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Start from top */
+  min-height: 100vh;
+  
+  /* REUSING THE SETUP BACKGROUND */
+  background-color: #0b1116; 
+  background-image: radial-gradient(#1a2631 15%, transparent 16%);
+  background-size: 20px 20px;
+  
+  padding: 2rem;
+  padding-top: 1rem;
+}
+
+.game-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.glitch-title {
+  font-family: 'Zen Dots', sans-serif;
+  font-size: 3rem;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  letter-spacing: 4px;
+}
+
+/* --- THE BATTLEFIELD LAYOUT --- */
+.battlefield {
+  display: flex;
+  flex-direction: row; /* Side by side */
+  gap: 5rem; /* Large gap between player and enemy */
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 1600px;
+}
+
+/* --- HEADERS AS BUTTONS --- */
+/* We style the headers to look like static tactical buttons */
+.status-btn {
+  width: 100%;
+  max-width: 400px;
+  height: 50px;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  cursor: default !important; /* It's just a label, not clickable */
+  pointer-events: none;
+}
+
+.status-btn.friendly {
+  border-color: #00ff00;
+  color: #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+}
+
+.status-btn.enemy {
+  border-color: #ff0000;
+  color: #ff0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
+}
+
+/* --- RESPONSIVE ADJUSTMENT --- */
+@media (max-width: 1300px) {
+  .battlefield {
+    flex-direction: column; /* Stack vertically on smaller screens */
+    align-items: center;
+    gap: 3rem;
+  }
+  
+  .tactical-board {
+    /* Slightly shrink grid if screen is too small */
+    transform: scale(0.9); 
+  }
+}
+
+/* Enemy Radar override */
+#computer-board.tactical-board::before {
+  background: conic-gradient(
+    from 0deg, 
+    transparent 0deg, 
+    transparent 280deg, 
+    rgba(255, 0, 0, 0.15) 360deg /* RED SWEEP */
+  );
+}
+#computer-board.tactical-board {
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+
+/* drag-drop.css */
+
+/* --- FORCE CLICKS TO PASS THROUGH DECORATIONS --- */
+.tactical-board::before,  /* The Radar */
+.ship-hull,               /* The Ships */
+.cell::after,             /* The Hit/Miss Markers */
+.cell::before {
+  pointer-events: none !important; 
+}
+
+/* --- SIMPLE, HIGH-CONTRAST COLORS --- */
+
+/* 1. MISS (Bright Dot) */
+.cell.miss {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.cell.miss::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  background-color: #888; /* Solid Grey */
+  border-radius: 50%;
+  box-shadow: 0 0 5px white;
+  z-index: 50; /* Top Priority */
+}
+
+/* 2. HIT (Bright Red X) */
+.cell.hit {
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  border: 1px solid red;
+}
+.cell.hit::after {
+  content: 'X';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+  color: #ff0000; /* Neon Red */
+  text-shadow: 0 0 10px black;
+  z-index: 50; /* Top Priority */
+}
+
+/* 3. SUNK (Dark Red Overlay) */
+.cell.sunk {
+  background-color: rgba(100, 0, 0, 0.6) !important;
+}

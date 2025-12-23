@@ -70,6 +70,10 @@ export const DomManager = (() => {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.addEventListener("click", (e) => {
+      const cell = e.target.closest(".cell");
+
+      // If we didn't click a cell, or if the cell is disabled, stop.
+      if (!cell || container.classList.contains("disabled")) return;
       const x = e.target.dataset.x;
       const y = e.target.dataset.y;
       if (x !== undefined && y !== undefined) {
