@@ -1,4 +1,5 @@
 import { createGameboard } from "./gameboard";
+import { Ship } from "./ship";
 
 const getPlayer = (n, t = "human") => {
   let name = n;
@@ -14,70 +15,65 @@ const getPlayer = (n, t = "human") => {
   };
 
   const randomPool = [];
-  let targetQueue = [];
-  let currentHunt = null;
+  // let targetQueue = []; // older implementation using queue
+  const huntStack = [];
+  let lastHit = null;
 
   const randomAttack = (enemyBoard) => {
     // if randomPool is exhausted it should return null
-    if (randomPool.length === 0 && targetQueue.length === 0) return null;
+    if (randomPool.length === 0 && huntStack.length === 0) return null;
     let target;
-    if (targetQueue.length !== 0) {
-      target = targetQueue.shift();
+    if (huntStack.length > 0) {
+      target = huntStack.pop();
       const idx = randomPool.findIndex(
         (m) => m.x === target.x && m.y === target.y
       );
-      if (idx !== -1) randomPool.splice(idx, 1);
+      if (idx === -1) return randomAttack(enemyBoard);
+      randomPool.splice(idx, 1);
     } else {
       target = randomPool.pop();
     }
 
     const result = enemyBoard.receiveAttack(target.x, target.y);
-    if (result) {
-      if (!currentHunt) {
-        currentHunt = { origin: target, axis: null };
-      } else if (currentHunt.axis === null) {
-        if (target.x !== currentHunt.origin.x) {
-          currentHunt.axis = "vertical";
-        } else if (target.y !== currentHunt.origin.y) {
-          currentHunt.axis = "horizontal";
-        }
-      }
-
-      if (currentHunt.axis === "horizontal") {
-        targetQueue = targetQueue.filter(
-          (coord) => coord.y === currentHunt.origin.y
+    if (result === true) {
+      const ship = enemyBoard.getGrid()[target.x][target.y];
+      if (ship.isSunk()) {
+        lastHit = null;
+      } else {
+        const neighbors = [
+          { x: target.x + 1, y: target.y },
+          { x: target.x - 1, y: target.y },
+          { x: target.x, y: target.y + 1 },
+          { x: target.x, y: target.y - 1 },
+        ];
+        const validNeighbors = neighbors.filter(
+          (n) =>
+            n.x >= 0 &&
+            n.x < 10 &&
+            n.y >= 0 &&
+            n.y < 10 &&
+            randomPool.some((p) => p.x === n.x && p.y === n.y)
         );
-      } else if (currentHunt.axis === "vertical") {
-        targetQueue = targetQueue.filter(
-          (coord) => coord.x === currentHunt.origin.x
-        );
-      }
 
-      const potentialNeighbors = [];
+        if (lastHit) {
+          const isHorizontal = target.x === lastHit.x;
+          const isVertical = target.y === lastHit.y;
 
-      if (!currentHunt.axis || currentHunt.axis === "horizontal") {
-        potentialNeighbors.push({ x: target.x + 1, y: target.y });
-        potentialNeighbors.push({ x: target.x - 1, y: target.y });
-      }
-      if (!currentHunt.axis || currentHunt.axis === "vertical") {
-        potentialNeighbors.push({ x: target.x, y: target.y + 1 });
-        potentialNeighbors.push({ x: target.x, y: target.y - 1 });
-      }
+          const aligned = [];
+          const others = [];
 
-      potentialNeighbors.forEach((n) => {
-        const inPool = randomPool.some((m) => m.x === n.x && m.y === n.y);
-        if (n.x >= 0 && n.x < 10 && n.y >= 0 && n.y < 10 && inPool) {
-          const inQueue = targetQueue.some((m) => m.x === n.x && m.y === n.y);
-          if (!inQueue) targetQueue.push(n);
+          validNeighbors.forEach((n) => {
+            if (isHorizontal && n.x === target.x) aligned.push(n);
+            else if (isVertical && n.y === target.y) aligned.push(n);
+            else others.push(n);
+          });
+
+          huntStack.push(...others);
+          huntStack.push(...aligned);
+        } else {
+          huntStack.push(...validNeighbors);
         }
-      });
-
-      if (enemyBoard.getGrid) {
-        const ship = enemyBoard.getGrid()[target.x][target.y];
-        if (ship && ship.isSunk()) {
-          currentHunt = null;
-          // targetQueue = [];
-        }
+        lastHit = target;
       }
     }
     return result;

@@ -1,7 +1,5 @@
 import { gameController } from "../src/modules/gameController";
 import { getPlayer } from "../src/modules/player";
-// import { createGameboard } from "../src/modules/gameboard";
-// import { Ship } from "../src/modules/ship";
 import { DomManager } from "../src/modules/DomManager";
 
 jest.mock("../src/modules/DomManager", () => ({
@@ -13,13 +11,6 @@ jest.mock("../src/modules/DomManager", () => ({
     bindEvents: jest.fn(),
   },
 }));
-
-// jest.mock("../src/modules/gameBoard", () => ({
-//   createGameBoard: {
-//     getShipAt: jest.fn(),
-//     getShipCoordinates: jest.fn(),
-//   },
-// }));
 
 describe("tests for gameController", () => {
   describe("tests for placeShipsRandomly", () => {
@@ -33,10 +24,11 @@ describe("tests for gameController", () => {
     });
 
     test("placeShipsRandomly places a ship successfully in the game board", () => {
-      let coords = board.getShipCoordinates(ships[0]);
+      const coords = board.getShipCoordinates(ships[0]);
       expect(ships.length).toBeGreaterThan(0);
       expect(coords.length).toBeGreaterThan(1);
     });
+
     test("placeShips places 5 different ships successfully in the game board", () => {
       expect(ships.length).toEqual(5);
       ships.forEach((ship) => {
@@ -55,18 +47,14 @@ describe("tests for gameController", () => {
       state = gameController.state;
     });
 
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
     test("all the conditions for initial state of game are met", () => {
       expect(state.playerOne.type).toEqual("human");
       expect(state.playerTwo.type).toEqual("computer");
-      // placeShips are called
       expect(state.playerOne.board.getShips().length).toEqual(5);
       expect(state.playerTwo.board.getShips().length).toEqual(5);
       expect(state.activePlayer).toEqual(state.playerOne);
     });
+
     test("initializeGame rendered 2 boards for 2 players successfully", () => {
       expect(DomManager.renderBoard).toHaveBeenCalledTimes(2);
 
@@ -84,13 +72,13 @@ describe("tests for gameController", () => {
     });
   });
 
-  describe("playRound", () => {
+  describe("playRound (Human Turn)", () => {
     let state;
 
     beforeEach(() => {
       jest.clearAllMocks();
       jest
-        .spyOn(gameController, "playComputerTurn") //using .spyOn as it allows undo feature and scope supports
+        .spyOn(gameController, "playComputerTurn")
         .mockImplementation(() => {});
       gameController.initializeGame("Harsh");
       state = gameController.state;
@@ -100,38 +88,45 @@ describe("tests for gameController", () => {
       jest.restoreAllMocks();
     });
 
-    test("test should return early if isGameOver is true ", () => {
+    test("should return early if isGameOver is true", () => {
       state.isGameOver = true;
       const spy = jest.spyOn(state.playerTwo.board, "receiveAttack");
       gameController.playRound(5, 5);
       expect(spy).not.toHaveBeenCalled();
     });
-    test("test should return early if activePlayer is computer ", () => {
+
+    test("should return early if activePlayer is computer", () => {
       state.activePlayer = state.playerTwo;
       const spy = jest.spyOn(state.playerTwo.board, "receiveAttack");
       gameController.playRound(5, 5);
       expect(spy).not.toHaveBeenCalled();
     });
-    test("test should return early if isProcessing is true ", () => {
+
+    test("should return early if isProcessing is true", () => {
       state.isProcessing = true;
       const spy = jest.spyOn(state.playerTwo.board, "receiveAttack");
       gameController.playRound(5, 5);
       expect(spy).not.toHaveBeenCalled();
     });
-    test("playRound should return early if attacked the already hit coords", () => {
+
+    test("should NOT switch turn if attacking an already hit coordinate", () => {
       const spy = jest
         .spyOn(state.playerTwo.board, "receiveAttack")
         .mockImplementation(() => null);
+
       gameController.playRound(5, 5);
+
       expect(spy).toHaveBeenCalled();
       expect(state.activePlayer).toEqual(state.playerOne);
-      expect(state.activePlayer).not.toEqual(state.playerTwo);
     });
-    test("playRound should switch sides and call playComputerTurn on miss and call updateCell", () => {
+
+    test("should switch sides and call playComputerTurn on a Valid Miss", () => {
       const spy = jest
         .spyOn(state.playerTwo.board, "receiveAttack")
         .mockImplementation(() => false);
+
       gameController.playRound(5, 5);
+
       expect(spy).toHaveBeenCalled();
       expect(DomManager.updateCell).toHaveBeenCalledWith(
         "computer-board",
@@ -143,6 +138,7 @@ describe("tests for gameController", () => {
       expect(state.activePlayer).toBe(state.playerTwo);
       expect(gameController.playComputerTurn).toHaveBeenCalled();
     });
+
     describe("playRound - successful hits", () => {
       let mockCoords;
       let mockShip;
@@ -182,7 +178,7 @@ describe("tests for gameController", () => {
         expect(gameController.playComputerTurn).toHaveBeenCalled();
       });
 
-      test("winning hit: updates UI, but ends game and DOES NOT call computer turn", () => {
+      test("winning hit: updates UI, ends game, DOES NOT call computer turn", () => {
         jest.spyOn(state.playerTwo.board, "allShipSunk").mockReturnValue(true);
 
         gameController.playRound(5, 5);
@@ -193,8 +189,10 @@ describe("tests for gameController", () => {
       });
     });
   });
+
   describe("computer's turn", () => {
     let state;
+
     test("playComputerTurn sets isProcessing to true and disables the computer-board", () => {
       gameController.initializeGame("Harsh");
       state = gameController.state;
@@ -203,44 +201,57 @@ describe("tests for gameController", () => {
       expect(DomManager.disableBoard).toHaveBeenCalled();
     });
 
-    describe("computer's turn inside timer", () => {
-      let attackSpy, coordsSpy, allShipSunkSpy;
+    describe("computer's turn inside timer (Logic Execution)", () => {
+      let attackSpy, coordsSpy, allShipSunkSpy, gridSpy;
+
       beforeEach(() => {
         jest.clearAllMocks();
         jest.useFakeTimers();
         gameController.initializeGame("Harsh");
         state = gameController.state;
+
         attackSpy = jest
           .spyOn(state.playerOne.board, "receiveAttack")
           .mockReturnValue(true);
+
+        const mockShip = { isSunk: jest.fn().mockReturnValue(false) };
+        const mockGrid = Array(10)
+          .fill(null)
+          .map(() => Array(10).fill(mockShip));
+
+        gridSpy = jest
+          .spyOn(state.playerOne.board, "getGrid")
+          .mockReturnValue(mockGrid);
+
         const mockAttackedShots = [{ x: 5, y: 5, missed: false }];
         coordsSpy = jest
           .spyOn(state.playerOne.board, "getAttackedShots")
           .mockReturnValue(mockAttackedShots);
+
         allShipSunkSpy = jest
           .spyOn(state.playerOne.board, "allShipSunk")
           .mockReturnValue(false);
+
         gameController.playComputerTurn();
         jest.runAllTimers();
       });
+
       afterEach(() => {
         jest.useRealTimers();
         jest.restoreAllMocks();
       });
 
-      test("playComputerTurn sets timeout and calls randomAttack and receives the position", () => {
+      test("calls randomAttack and gets the position", () => {
         expect(attackSpy).toHaveBeenCalled();
         expect(coordsSpy).toHaveBeenCalled();
-        const returnedValue = coordsSpy.mock.results[0].value;
-        expect(returnedValue).toContainEqual({ x: 5, y: 5, missed: false });
       });
-      test("UI updated", () => {
+
+      test("UI updated correctly", () => {
         expect(DomManager.updateCell).toHaveBeenCalled();
       });
-      test("check whether game is over", () => {
+
+      test("checks win condition, resets processing, and enables board", () => {
         expect(allShipSunkSpy).toHaveBeenCalled();
-        const returnedValue = allShipSunkSpy.mock.results[0].value;
-        expect(returnedValue).toEqual(false);
         expect(state.activePlayer).toBe(state.playerOne);
         expect(state.isProcessing).toBe(false);
         expect(DomManager.enableBoard).toHaveBeenCalled();
