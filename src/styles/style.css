@@ -1,102 +1,7 @@
-/* we use :root pseudo-class to target highest level DOM element to be able to declare CSS custom properties */
 :root {
-  font-size: 62.5%; /*basically makes 1 rem = 10px*/
-  /* most preferred approach would be to use scss functions to convert px values to rem keeping default size as 16px, would implement it later */
-  /* a unitless value is preferred for better inheritance, now the vertical spacing between the lines is 1.5 * parent's font-size  */
+  font-size: 62.5%;
   line-height: 1.5;
-  /* a css custom-property is used to specify system font-stack for faster loading */
-  --system-ui:
-    system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-body {
-  /* default style is 16px = 1.6rem * 10 px */
-  font-size: 1.6rem;
-  /* WebKit-based browsers like Chrome, Safari, Edge on macOS  */
-  /* to make the font thinner and lighter */
-  -webkit-font-smoothing: antialiased;
-  /* background-color: aquamarine; */
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-* {
-  margin: 0;
-}
-
-img,
-picture,
-svg,
-video,
-canvas {
-  /* block */
-  display: block;
-  /* equivalent to max-width but also applicable for vertical flow, ensures the content does not overflow parent container and if the image is too large it will scale-down to fit the container  */
-  max-inline-size: 100%;
-  /* max-inline-size is a modern alternative to max-width and for maximum compatibility use of both is preferred */
-  max-width: 100%;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: inherit;
-  font-weight: inherit;
-  /* for more balanced text-wrap ensures only single word is not left on the last line */
-  text-wrap: balance;
-}
-
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
-}
-
-p {
-  text-wrap: pretty;
-}
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-ol[role="list"],
-ul[role="list"] {
-  list-style: none;
-  padding-inline: 0;
-}
-
-/* smoothly animating height change */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    interpolate-size: allow-keywords;
-  }
-}
-
-/*
-  12. Create a stacking context for React/Next.js apps.
-*/
-#root,
-#__next {
-  isolation: isolate;
-}
-
-:root {
+  --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --color-water: hsl(205, 87%, 94%);
   --color-ship: hsl(207, 90%, 77%);
   --color-hit: hsl(1, 83%, 63%);
@@ -105,11 +10,53 @@ ul[role="list"] {
   --cell-size: 5rem;
 }
 
+body {
+  font-size: 1.6rem;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+img, picture, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font: inherit;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+ul[role="list"], ol[role="list"] {
+  list-style: none;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { interpolate-size: allow-keywords; }
+}
+
+#root, #__next { isolation: isolate; }
+
+/* --- GAME BOARD LAYOUT --- */
 #game-container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  /* align-items: center; */
 }
 
 #game-container h1 {
@@ -139,33 +86,19 @@ h2 {
 }
 
 .cell {
-    background-color: var(--color-water);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
+  background-color: var(--color-water);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
-.cell:hover {
-  opacity: 0.8;
-}
-
-.cell.ship {
-  background-color: var(--color-ship);
-}
-
-.cell.hit {
-  background-color: var(--color-hit);
-}
-
-.cell.miss {
-  background-color: var(--color-miss);
-}
-
-.cell.sunk {
-  background-color: var(--color-sunk);
-}
+.cell:hover { opacity: 0.8; }
+.cell.ship { background-color: var(--color-ship); }
+.cell.hit { background-color: var(--color-hit); }
+.cell.miss { background-color: var(--color-miss); }
+.cell.sunk { background-color: var(--color-sunk); }
 
 .board.disabled {
   pointer-events: none;
@@ -174,7 +107,9 @@ h2 {
   filter: grayscale(100%) brightness(0.8);
 }
 
-/* phase 3 */
+.hidden { display: none !important; }
+
+/* --- PHASE 3: MODALS & FORMS --- */
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
@@ -186,19 +121,14 @@ dialog {
   border-radius: 1rem;
   padding: 3rem;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  
-  /* Match your clean aesthetic */
   background-color: white;
-  color: var(--color-sunk); 
+  color: var(--color-sunk);
   font-family: 'Noto Sans', sans-serif;
-  
-  /* Animation */
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Class to trigger animation (we will toggle this in JS) */
 dialog[open] {
   opacity: 1;
   transform: scale(1);
@@ -219,10 +149,7 @@ dialog[open] {
   margin-bottom: 2rem;
 }
 
-label {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
+label { font-size: 1.4rem; font-weight: 700; }
 
 input[type="text"] {
   padding: 1rem;
@@ -233,28 +160,21 @@ input[type="text"] {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus {
-  border-color: var(--color-ship); /* Blue highlight */
-}
-
-/* Validation Styling */
-input.invalid {
-  border-color: var(--color-hit); /* Red border on error */
-}
+input[type="text"]:focus { border-color: var(--color-ship); }
+input.invalid { border-color: var(--color-hit); }
 
 .error-message {
   font-size: 1.2rem;
   color: var(--color-hit);
-  min-height: 1.5rem; /* Prevents layout jump */
+  min-height: 1.5rem;
   font-weight: 700;
 }
 
-/* Button Styling */
 .btn-primary {
   width: 100%;
   padding: 1.2rem;
-  background-color: var(--color-ship); /* Blue button */
-  color: white; /* White text */
+  background-color: var(--color-ship);
+  color: white;
   border: none;
   border-radius: 0.5rem;
   font-weight: 700;
@@ -262,156 +182,115 @@ input.invalid {
   transition: filter 0.2s;
 }
 
-.btn-primary:hover {
-  filter: brightness(0.9);
-}
+.btn-primary:hover { filter: brightness(0.9); }
 
-.hidden {
-    display: none !important;
-}
-
+/* --- START SCREEN --- */
 #start-game-wrapper {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 3rem;
-    background-color: white; /* Keeping your clean aesthetic */
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  background-color: white;
 }
 
 #start-game-wrapper h1 {
-    font-size: 8rem;
-    font-family: 'Zen Dots', cursive; /* Assuming you want the sci-fi font here */
-    color: var(--color-sunk);
-    text-transform: uppercase;
-    letter-spacing: 0.5rem;
+  font-size: 8rem;
+  font-family: 'Zen Dots', cursive;
+  color: var(--color-sunk);
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
 }
 
-/* Adjust button size for the main start button */
 #start-btn {
-    font-size: 2rem;
-    padding: 1.5rem 4rem;
-    max-width: 300px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  font-size: 2rem;
+  padding: 1.5rem 4rem;
+  max-width: 300px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-/* Optional: Adjust game header size since it's no longer the landing page */
-.game-header {
-    font-size: 3rem;
-    margin: 2rem 0;
-    text-align: center;
-}
-
-/* theme toggle and dropdown */
+/* --- GLOBAL UI & DROPDOWNS --- */
 #global-ui {
-    position: fixed; 
-    top: 20px;
-    right: 20px;
-    z-index: 1000; 
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    max-width: 1200px;
-    margin: 2rem auto;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
+.dropdown { position: relative; display: inline-block; }
 
 .btn-secondary {
-    background: transparent;
-    border: 2px solid var(--color-sunk);
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    background-color: white; 
+  background: white;
+  border: 2px solid var(--color-sunk);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .dropdown-content {
-    display: none; /* Hidden by default */
-    position: absolute;
-    right: 0;
-    top: 110%; /* Just below the button */
-    background-color: white;
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    border-radius: 0.5rem;
-    z-index: 1;
-    overflow: hidden;
-    border: 1px solid hsl(0, 0%, 90%);
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 110%;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-radius: 0.5rem;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid hsl(0, 0%, 90%);
 }
 
-/* The class JS will toggle */
 .dropdown-content.show {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .dropdown-content button {
-    background: none;
-    border: none;
-    padding: 1rem;
-    text-align: left;
-    cursor: pointer;
-    font-size: 1.4rem;
-    width: 100%;
+  background: none;
+  border: none;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.4rem;
+  width: 100%;
 }
 
-.dropdown-content button:hover {
-    background-color: hsl(0, 0%, 95%);
-}
+.dropdown-content button:hover { background-color: hsl(0, 0%, 95%); }
 
 /* --- PHASE 3.4: RETRO THEME --- */
-/* This class overrides the :root variables when added to body */
 body.retro {
-    --color-water: #000000;      /* Black Sea */
-    --color-ship: #33ff00;       /* Terminal Green */
-    --color-hit: #ff0000;        /* Bright Red */
-    --color-miss: #333333;       /* Dark Grey */
-    --color-sunk: #004400;       /* Dark Green */
-    
-    background-color: #1a1a1a;
-    color: #33ff00;
-    font-family: 'Courier New', Courier, monospace;
-    background-image: none; /* Remove gif if you want pure retro */
-    
+  --color-water: #000000;
+  --color-ship: #33ff00;
+  --color-hit: #ff0000;
+  --color-miss: #333333;
+  --color-sunk: #004400;
+  background-color: #1a1a1a;
+  color: #33ff00;
+  font-family: 'Courier New', Courier, monospace;
+  background-image: none;
 }
 
-body.retro h1, 
-body.retro h2, 
-body.retro p,
-body.retro label {
-    color: #33ff00;
-    text-shadow: 0 0 5px #33ff00;
+body.retro h1, body.retro h2, body.retro p, body.retro label {
+  color: #33ff00;
+  text-shadow: 0 0 5px #33ff00;
 }
 
-/* Retro specific tweaks */
-body.retro .cell {
-    border: 1px solid #333; /* Grid lines visible */
-}
-
-body.retro .board {
-    border-color: #33ff00;
-}
+body.retro .cell { border: 1px solid #333; }
+body.retro .board { border-color: #33ff00; }
 
 body.retro .btn-primary {
-    background-color: #33ff00;
-    color: black;
-    border-radius: 0; /* Square buttons */
+  background-color: #33ff00;
+  color: black;
+  border-radius: 0;
 }
 
 body.retro dialog {
-    background-color: black;
-    border: 2px solid #33ff00;
-    color: #33ff00;
-    border-radius: 0;
+  background-color: black;
+  border: 2px solid #33ff00;
+  color: #33ff00;
+  border-radius: 0;
 }

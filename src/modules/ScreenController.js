@@ -1,116 +1,91 @@
 import { gameController } from "./gameController";
+import { SetupController } from "./SetupController";
 
 const ScreenController = (() => {
-  const startScreen = document.getElementById("start-game-wrapper");
-  const startBtn = document.getElementById("start-btn");
-  const gameContainer = document.getElementById("game-container");
-  const startModal = document.getElementById("start-modal");
-  const startForm = document.getElementById("start-form");
-  const nameInput = document.getElementById("player-name");
-  const nameError = document.querySelector(".error-message");
-  // game over DOM
-  const gameOverModal = document.getElementById("game-over-modal");
-  const winnerDisplay = document.getElementById("winner-display");
-  const restartBtn = document.getElementById("restart-btn");
-  // themeChangers
-  const settingsBtn = document.getElementById("settings-btn");
-  const settingsMenu = document.getElementById("settings-menu");
-  const themeButtons = document.querySelectorAll(".dropdown-content button");
+  const el = {
+    startScreen: document.getElementById("start-game-wrapper"),
+    startBtn: document.getElementById("start-btn"),
+    gameContainer: document.getElementById("game-container"),
+    startModal: document.getElementById("start-modal"),
+    startForm: document.getElementById("start-form"),
+    nameInput: document.getElementById("player-name"),
+    nameError: document.querySelector(".error-message"),
+    gameOverModal: document.getElementById("game-over-modal"),
+    winnerDisplay: document.getElementById("winner-display"),
+    restartBtn: document.getElementById("restart-btn"),
+    settingsBtn: document.getElementById("settings-btn"),
+    settingsMenu: document.getElementById("settings-menu"),
+    setupContainer: document.getElementById("setup-container"),
+    themeBtns: document.querySelectorAll(".dropdown-content button"),
+  };
+
   const init = () => {
-    setupEventListeners();
-    setupDropdownListeners();
-  };
+    el.startBtn.onclick = () => el.startModal.showModal();
+    el.nameInput.oninput = validateInput;
 
-  const setupEventListeners = () => {
-    startBtn.addEventListener("click", () => {
-      startModal.showModal();
-    });
-
-    nameInput.addEventListener("input", () => {
-      validateNameInput();
-    });
-
-    startForm.addEventListener("submit", (e) => {
+    el.startForm.onsubmit = (e) => {
       e.preventDefault();
+      if (!validateInput()) return;
 
-      if (validateNameInput()) {
-        const playerName = nameInput.value;
+      el.startModal.close();
+      el.startScreen.classList.add("hidden");
+      el.setupContainer.classList.remove("hidden");
 
-        startModal.close();
-        startScreen.classList.add("hidden");
-        gameContainer.classList.remove("hidden");
+      const player = gameController.initPlayers(el.nameInput.value);
+      SetupController.init(player);
+    };
 
-        gameController.initializeGame(playerName);
-      }
-    });
-    restartBtn.addEventListener("click", () => {
-      gameOverModal.close();
-
-      gameContainer.classList.add("hidden");
-      startScreen.classList.remove("hidden");
-
+    el.restartBtn.onclick = () => {
+      el.gameOverModal.close();
+      el.gameContainer.classList.add("hidden");
+      el.setupContainer.classList.add("hidden");
+      el.startScreen.classList.remove("hidden");
       gameController.resetGame();
-    });
+    };
+
+    setupDropdown();
   };
-  const setupDropdownListeners = () => {
-    settingsBtn.addEventListener("click", (e) => {
+
+  const setupDropdown = () => {
+    el.settingsBtn.onclick = (e) => {
       e.stopPropagation();
-      settingsMenu.classList.toggle("show");
-    });
+      el.settingsMenu.classList.toggle("show");
+    };
 
-    // 2. Close Dropdown when clicking outside
-    window.addEventListener("click", (e) => {
-      if (!e.target.matches("#settings-btn")) {
-        if (settingsMenu.classList.contains("show")) {
-          settingsMenu.classList.remove("show");
-        }
-      }
-    });
+    window.onclick = (e) => {
+      if (!e.target.closest("#settings-btn"))
+        el.settingsMenu.classList.remove("show");
+    };
 
-    // 3. Theme Switching Logic
-    themeButtons.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const theme = e.target.dataset.theme;
-
-        if (theme === "retro") {
-          document.body.classList.add("retro");
-        } else {
-          document.body.classList.remove("retro");
-        }
-
-        // Close menu after selection
-        settingsMenu.classList.remove("show");
-      });
-    });
+    el.themeBtns.forEach(
+      (btn) =>
+        (btn.onclick = (e) => {
+          document.body.classList.toggle(
+            "retro",
+            e.target.dataset.theme === "retro"
+          );
+          el.settingsMenu.classList.remove("show");
+        })
+    );
   };
 
-  const validateNameInput = () => {
-    if (nameInput.validity.valueMissing) {
-      showError("Admiral, we need a name to authorize the fleet.");
-      return false;
-    } else if (nameInput.value.length < 3) {
-      showError("Name too short! Minimum 3 characters.");
-      return false;
-    } else {
-      showError("");
-      nameInput.classList.remove("invalid");
-      nameInput.classList.add("valid");
-      return true;
-    }
+  const validateInput = () => {
+    const val = el.nameInput.value;
+    const msg = !val
+      ? "Admiral, we need a name."
+      : val.length < 3
+        ? "Name too short!"
+        : "";
+
+    el.nameError.textContent = msg;
+    el.nameInput.classList.toggle("invalid", !!msg);
+    el.nameInput.classList.toggle("valid", !msg);
+    return !msg;
   };
 
-  const showError = (message) => {
-    nameError.textContent = message;
-    if (message) {
-      nameInput.classList.add("invalid");
-    } else {
-      nameInput.classList.remove("invalid");
-    }
-  };
-
-  const showGameOver = (winnerName) => {
-    winnerDisplay.textContent = `${winnerName.toUpperCase()} WINS!`;
-    gameOverModal.showModal();
+  const showGameOver = (winner) => {
+    el.winnerDisplay.textContent = `${winner.toUpperCase()} WINS!`;
+    el.gameOverModal.showModal();
   };
 
   return { init, showGameOver };

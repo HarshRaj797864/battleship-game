@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="description" content="" />
 
-    <!-- Combined Google Fonts request -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,7 +13,6 @@
       rel="stylesheet"
     />
 
-    <!-- Font Awesome via CDN -->
     <script
       src="https://kit.fontawesome.com/a538d6fa29.js"
       crossorigin="anonymous"
@@ -23,6 +21,7 @@
     <title>BattleShip</title>
   </head>
   <body>
+
     <nav id="global-ui">
       <div class="dropdown">
         <button id="settings-btn" class="btn-secondary">⚙️ Settings</button>
@@ -33,10 +32,37 @@
       </div>
     </nav>
 
+
     <div id="start-game-wrapper">
       <h1 class="main-title">BATTLESHIP</h1>
       <button id="start-btn" class="btn-primary">Start Game</button>
     </div>
+
+
+    <div id="setup-container" class="hidden">
+        <h1 class="main-title" style="font-size: 4rem;">DEPLOY FLEET</h1>
+        
+        <div class="setup-content">
+            <div class="harbor-section">
+                <div class="harbor-header">
+                    <h2>DOCKYARD</h2>
+                    <button id="rotate-btn" class="btn-secondary">AXIS: X</button>
+                </div>
+                
+                <div id="fleet-harbor" class="harbor-grid"></div>
+            </div>
+
+            <div class="board-wrapper">
+                <h2>FRIENDLY WATERS</h2>
+                <div id="setup-board" class="board"></div>
+            </div>
+        </div>
+
+        <button id="finish-setup-btn" class="btn-primary disabled" disabled>
+            ENTER COMBAT
+        </button>
+    </div>
+
 
     <div id="game-container" class="hidden">
       <header>
@@ -47,12 +73,14 @@
           <h2>FRIENDLY WATERS</h2>
           <div class="board" id="player-board"></div>
         </div>
-        <board-wrapper>
+        <div class="board-wrapper">
           <h2>ENEMY WATERS</h2>
           <div class="board" id="computer-board"></div>
-        </board-wrapper>
+        </div>
       </div>
     </div>
+
+
     <dialog id="start-modal">
       <div class="modal-content">
         <h2>Enter the War Room</h2>
@@ -72,6 +100,8 @@
         </form>
       </div>
     </dialog>
+
+
     <dialog id="game-over-modal">
       <div class="modal-content">
         <h2 id="winner-display">PLAYER WINS!</h2>
@@ -79,5 +109,6 @@
         <button id="restart-btn" class="btn-primary">Play Again</button>
       </div>
     </dialog>
+
   </body>
 </html>

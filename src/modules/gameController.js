@@ -8,36 +8,35 @@ export const gameController = (() => {
     playerOne: null,
     playerTwo: null,
     activePlayer: null,
-    isGameOver: null,
+    isGameOver: false,
     isProcessing: false,
   };
-  // building auto-place helper function as a temporary replacement of drag and drop mechanism of placing ships
-  const placeShipsRandomly = (player) => {
-    const fleet = [5, 4, 3, 3, 2]; // ship lengths
 
-    fleet.forEach((len) => {
-      let counter = 0;
-      while (counter < 100) {
-        let x = Math.floor(Math.random() * 10);
-        let y = Math.floor(Math.random() * 10);
-        // let isVertical = Math.floor(Math.random() * 2) === 0 ? false : true;
-        let isVertical = Math.random() < 0.5;
+  const placeShipsRandomly = (player) => {
+    [5, 4, 3, 3, 2].forEach((len) => {
+      let placed = false;
+      while (!placed) {
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
+        const isVertical = Math.random() < 0.5;
         try {
           player.board.placeShip(new Ship(len), x, y, isVertical);
-          break;
+          placed = true;
         } catch {
-          counter++;
-          continue;
+          console.log("not allowed");
         }
       }
     });
   };
 
-  const initializeGame = (name) => {
+  const initPlayers = (name) => {
     state.playerOne = getPlayer(name, "human");
     state.playerTwo = getPlayer("computer", "computer");
-    placeShipsRandomly(state.playerOne);
-    placeShipsRandomly(state.playerTwo);
+    placeShipsRandomly(state.playerTwo); // Computer ships only
+    return state.playerOne;
+  };
+
+  const startGame = () => {
     DomManager.renderBoard(state.playerOne.board, "player-board", false);
     DomManager.renderBoard(state.playerTwo.board, "computer-board", true);
     state.activePlayer = state.playerOne;
@@ -45,44 +44,34 @@ export const gameController = (() => {
     state.isProcessing = false;
     DomManager.bindEvents("computer-board", playRound);
   };
-  //   creating it early for the spy
+
   const playComputerTurn = () => {
     state.isProcessing = true;
     DomManager.disableBoard("computer-board");
-    setTimeout(() => {
-      state.playerTwo.randomAttack(state.playerOne.board);
-      const coords = state.playerOne.board.getAttackedShots();
-      const shotStatus = coords.at(-1);
-      let ship;
-      let shipCoords;
 
-      if (shotStatus.missed === false) {
-        ship = state.playerOne.board.getShipAt(shotStatus.x, shotStatus.y);
-      }
-      if (ship && ship.isSunk()) {
-        shipCoords = state.playerOne.board.getShipCoordinates(ship);
-      } else {
-        shipCoords = null;
-      }
-      DomManager.updateCell(
-        "player-board",
-        shotStatus.x,
-        shotStatus.y,
-        !shotStatus.missed,
-        shipCoords
-      );
-      if (state.playerOne.board.allShipSunk()) {
-        // Human ships are gone. Computer (Player Two) wins.
+    setTimeout(() => {
+      const p1Board = state.playerOne.board;
+      state.playerTwo.randomAttack(p1Board);
+
+      const { x, y, missed } = p1Board.getAttackedShots().at(-1);
+      const ship = !missed && p1Board.getShipAt(x, y);
+      const shipCoords = ship?.isSunk()
+        ? p1Board.getShipCoordinates(ship)
+        : null;
+
+      DomManager.updateCell("player-board", x, y, !missed, shipCoords);
+
+      if (p1Board.allShipSunk()) {
         state.isGameOver = true;
         ScreenController.showGameOver(state.playerTwo.name);
       } else {
-        // Game continues: Pass turn back to Human
         state.activePlayer = state.playerOne;
         state.isProcessing = false;
         DomManager.enableBoard("computer-board");
       }
     }, 800);
   };
+
   const playRound = (x, y) => {
     if (
       state.isGameOver ||
@@ -91,26 +80,25 @@ export const gameController = (() => {
     )
       return;
 
-    const attacked = state.playerOne.attack(state.playerTwo.board, x, y);
-    if (attacked !== null) {
-      const ship = state.playerTwo.board.getShipAt(x, y);
-      let coords;
-      if (ship && ship.isSunk()) {
-        coords = state.playerTwo.board.getShipCoordinates(ship);
-      } else {
-        coords = null;
-      }
+    const p2Board = state.playerTwo.board;
+    const hit = state.playerOne.attack(p2Board, x, y);
 
-      DomManager.updateCell("computer-board", x, y, attacked, coords);
-      if (state.playerTwo.board.allShipSunk()) {
+    if (hit !== null) {
+      const ship = p2Board.getShipAt(x, y);
+      const shipCoords = ship?.isSunk()
+        ? p2Board.getShipCoordinates(ship)
+        : null;
+
+      DomManager.updateCell("computer-board", x, y, hit, shipCoords);
+
+      if (p2Board.allShipSunk()) {
         state.isGameOver = true;
         ScreenController.showGameOver(state.playerOne.name);
-        return;
+      } else {
+        state.activePlayer = state.playerTwo;
+        playComputerTurn();
       }
-      state.activePlayer = state.playerTwo;
-      gameController.playComputerTurn();
     }
-    return;
   };
 
   const resetGame = () => {
@@ -118,16 +106,9 @@ export const gameController = (() => {
     state.playerTwo = null;
     state.isGameOver = false;
     state.activePlayer = null;
-
     document.getElementById("player-board").innerHTML = "";
     document.getElementById("computer-board").innerHTML = "";
   };
-  return {
-    state,
-    placeShipsRandomly,
-    initializeGame,
-    playRound,
-    playComputerTurn,
-    resetGame,
-  };
+
+  return { initPlayers, startGame, playRound, resetGame };
 })();
