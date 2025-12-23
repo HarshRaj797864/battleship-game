@@ -12,9 +12,13 @@ const ScreenController = (() => {
   const gameOverModal = document.getElementById("game-over-modal");
   const winnerDisplay = document.getElementById("winner-display");
   const restartBtn = document.getElementById("restart-btn");
-
+  // themeChangers
+  const settingsBtn = document.getElementById("settings-btn");
+  const settingsMenu = document.getElementById("settings-menu");
+  const themeButtons = document.querySelectorAll(".dropdown-content button");
   const init = () => {
     setupEventListeners();
+    setupDropdownListeners();
   };
 
   const setupEventListeners = () => {
@@ -48,6 +52,37 @@ const ScreenController = (() => {
       gameController.resetGame();
     });
   };
+  const setupDropdownListeners = () => {
+    settingsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      settingsMenu.classList.toggle("show");
+    });
+
+    // 2. Close Dropdown when clicking outside
+    window.addEventListener("click", (e) => {
+      if (!e.target.matches("#settings-btn")) {
+        if (settingsMenu.classList.contains("show")) {
+          settingsMenu.classList.remove("show");
+        }
+      }
+    });
+
+    // 3. Theme Switching Logic
+    themeButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const theme = e.target.dataset.theme;
+
+        if (theme === "retro") {
+          document.body.classList.add("retro");
+        } else {
+          document.body.classList.remove("retro");
+        }
+
+        // Close menu after selection
+        settingsMenu.classList.remove("show");
+      });
+    });
+  };
 
   const validateNameInput = () => {
     if (nameInput.validity.valueMissing) {
@@ -77,6 +112,7 @@ const ScreenController = (() => {
     winnerDisplay.textContent = `${winnerName.toUpperCase()} WINS!`;
     gameOverModal.showModal();
   };
+
   return { init, showGameOver };
 })();
 

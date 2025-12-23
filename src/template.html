@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta name="description" content="">
-    
+    <meta name="description" content="" />
+
     <!-- Combined Google Fonts request -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,26 +13,35 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Nunito:wght@800&family=Source+Sans+Pro:wght@900&display=swap"
       rel="stylesheet"
     />
-    
-
 
     <!-- Font Awesome via CDN -->
     <script
       src="https://kit.fontawesome.com/a538d6fa29.js"
       crossorigin="anonymous"
     ></script>
-    
+
     <title>BattleShip</title>
-</head>
-<body>
-    
+  </head>
+  <body>
+    <nav id="global-ui">
+      <div class="dropdown">
+        <button id="settings-btn" class="btn-secondary">⚙️ Settings</button>
+        <div id="settings-menu" class="dropdown-content">
+          <button data-theme="default">🌊 Ocean Theme</button>
+          <button data-theme="retro">👾 Retro Theme</button>
+        </div>
+      </div>
+    </nav>
+
     <div id="start-game-wrapper">
-        <h1 class="main-title">BATTLESHIP</h1>
-        <button id="start-btn" class="btn-primary">Start Game</button>
+      <h1 class="main-title">BATTLESHIP</h1>
+      <button id="start-btn" class="btn-primary">Start Game</button>
     </div>
-    
+
     <div id="game-container" class="hidden">
-      <h1>BATTLESHIP</h1>
+      <header>
+        <h1>BATTLESHIP</h1>
+      </header>
       <div class="board-section">
         <div class="board-wrapper">
           <h2>FRIENDLY WATERS</h2>
@@ -45,25 +54,30 @@
       </div>
     </div>
     <dialog id="start-modal">
-        <div class="modal-content">
-            <h2>Enter the War Room</h2>
-            <form id="start-form" novalidate>
-                <div class="input-group">
-                    <label for="player-name">Admiral Name</label>
-                    <input type="text" id="player-name" placeholder="e.g. Commander Sheppard" required minlength="3">
-                    <span class="error-message"></span>
-                </div>
-                <button type="submit" class="btn-primary">Deploy Fleet</button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <h2>Enter the War Room</h2>
+        <form id="start-form" novalidate>
+          <div class="input-group">
+            <label for="player-name">Admiral Name</label>
+            <input
+              type="text"
+              id="player-name"
+              placeholder="e.g. Commander Sheppard"
+              required
+              minlength="3"
+            />
+            <span class="error-message"></span>
+          </div>
+          <button type="submit" class="btn-primary">Deploy Fleet</button>
+        </form>
+      </div>
     </dialog>
     <dialog id="game-over-modal">
-        <div class="modal-content">
-            <h2 id="winner-display">PLAYER WINS!</h2>
-            <p>The seas are silent once more.</p>
-            <button id="restart-btn" class="btn-primary">Play Again</button>
-        </div>
+      <div class="modal-content">
+        <h2 id="winner-display">PLAYER WINS!</h2>
+        <p>The seas are silent once more.</p>
+        <button id="restart-btn" class="btn-primary">Play Again</button>
+      </div>
     </dialog>
-    
-</body>
+  </body>
 </html>
