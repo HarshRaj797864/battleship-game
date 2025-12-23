@@ -1,0 +1,279 @@
+/* --- TACTICAL COMMAND MODAL --- */
+
+dialog {
+  width: 80vw;
+  max-width: 850px;
+  height: 60vh;
+  min-height: 450px;
+  background-color: rgba(6, 9, 12, 0.98); /* Near-black tactical background */
+  border: 1px solid var(--color-ship);
+  border-radius: 1.5rem;
+  padding: 0; /* Remove default padding to control inner layout */
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+dialog[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Background Ship Decoration */
+.modal-decoration {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 350px;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(-10deg);
+}
+
+.modal-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.modal-content h2 {
+  font-family: 'Zen Dots', cursive;
+  font-size: 2.8rem;
+  color: white;
+  text-align: center;
+  letter-spacing: 0.3rem;
+  margin: 0;
+}
+
+/* --- TACTICAL LINE INPUT --- */
+
+.input-group.line-input {
+  position: relative;
+  width: 100%;
+}
+
+.line-input input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #333;
+  color: var(--color-ship);
+  font-size: 2.2rem;
+  padding: 1rem 0;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.line-input input:focus {
+  outline: none;
+  border-bottom-color: var(--color-ship);
+}
+
+.line-input label {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #666;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* Float label up on focus/content */
+.line-input input:focus ~ label,
+.line-input input:not(:placeholder-shown) ~ label {
+  top: -2.5rem;
+  font-size: 1.1rem;
+  color: var(--color-ship);
+  opacity: 0.8;
+}
+
+/* --- THE SVG FILL BUTTON ---
+
+.btn-svg-interaction {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-text {
+  position: relative;
+  z-index: 10;
+  font-family: 'Zen Dots', cursive;
+  font-size: 1.8rem;
+  color: var(--color-ship);
+  transition: color 0.3s ease;
+}
+
+.btn-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.btn-border path {
+  fill: transparent;
+  stroke: var(--color-ship);
+  stroke-width: 2;
+  transition: all 0.4s ease;
+}
+
+/* Hover Animation: Hidden path fills up */
+/* .btn-svg-interaction:hover .btn-border path {
+  fill: var(--color-ship);
+}
+
+.btn-svg-interaction:hover .btn-text {
+  color: #06090c; /* Matches modal background for cutout effect */
+/* } 
+
+/* --- THE BATTLESHIP SVG BUTTON --- */
+
+.btn-svg-interaction {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  /* UPDATED SIZE FOR SHIP ASPECT RATIO */
+  width: 300px;  /* Much wider to fit the ship */
+  height: 65px;  /* Matches the viewBox height */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem auto 0; /* Centers it and adds space from input */
+  padding: 0;
+}
+
+/* The Text */
+.btn-text {
+  position: relative;
+  z-index: 10;
+  font-family: 'Zen Dots', cursive;
+  font-size: 1.8rem;
+  color: var(--color-ship); /* Starts as Blue/Green */
+  letter-spacing: 2px;
+  
+  /* Vital for the contrast effect */
+  transition: color 0.4s ease;
+  pointer-events: none;
+  
+  /* Optional: Moves text slightly down to sit on the "hull" */
+  transform: translateY(22px); 
+}
+
+/* The SVG "Container" */
+.btn-border {
+  position: absolute;
+  top: -3rem;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: visible; /* Prevents clipping if the stroke is thick */
+  transform: scale(1.25);
+  transform-origin: center;
+}
+
+/* The Ship Path Itself */
+.btn-border path {
+  fill: transparent;         /* Hidden initially */
+  stroke: transparent;
+  stroke-width: 2;
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  
+  /* Fix for crisp edges */
+  vector-effect: non-scaling-stroke;
+}
+
+/* --- HOVER ANIMATION (The "Video" Effect) --- */
+
+/* 1. The Ship Fills with Theme Color */
+.btn-svg-interaction:hover .btn-border path {
+  fill: var(--color-ship); 
+  stroke: var(--color-ship);
+  filter: drop-shadow(0 0 8px var(--color-ship)); /* Optional: Adds a cool glow */
+}
+
+/* 2. The Text turns BLACK (or Dark) to contrast against the filled ship */
+.btn-svg-interaction:hover .btn-text {
+  color: #06090c; /* Matches the deep modal background color */
+  text-shadow: none;
+}
+
+/* --- RETRO THEME OVERRIDES --- */
+body.retro .btn-text { color: #33ff00; }
+body.retro .btn-border path { stroke: #33ff00; }
+body.retro .btn-svg-interaction:hover .btn-border path { 
+  fill: #33ff00; 
+  filter: drop-shadow(0 0 10px #33ff00);
+}
+body.retro .btn-svg-interaction:hover .btn-text { color: black; }
+
+/* --- RETRO OVERRIDES --- */
+
+body.retro dialog {
+  background-color: black;
+  border: 2px solid #33ff00;
+  border-radius: 0;
+}
+
+body.retro .line-input input {
+  color: #33ff00;
+  border-bottom-color: #1a1a1a;
+}
+
+body.retro .line-input input:focus {
+  border-bottom-color: #33ff00;
+}
+
+body.retro .btn-text {
+  color: #33ff00;
+}
+
+body.retro .btn-border path {
+  stroke: #33ff00;
+}
+
+body.retro .btn-svg-interaction:hover .btn-border path {
+  fill: #33ff00;
+}
+
+/* making dialog more responsive */
+dialog.is-hidden {
+  display: none !important;
+}
+
+dialog {
+  margin: auto;
+}
+dialog[open] {
+  display: flex !important;
+}
