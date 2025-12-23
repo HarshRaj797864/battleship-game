@@ -128,6 +128,13 @@ export const DomManager = (() => {
       shipImg.src = SHIP_ICONS[ship.name.toLowerCase()] || "";
       shipImg.classList.add("ship-hull");
 
+      // FIX 3: Explicitly disable dragging on placed ships
+      shipImg.setAttribute("draggable", "false");
+
+      // FIX 4: Ensure dragging interaction is killed at the CSS level
+      shipImg.style.userSelect = "none";
+      shipImg.style.pointerEvents = "none";
+
       if (ship.isSunk()) {
         shipImg.classList.add("sunk-overlay");
       }

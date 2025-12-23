@@ -126,6 +126,8 @@ export const SetupController = (() => {
       card.addEventListener("dragend", () => {
         card.classList.remove("dragging");
         clearHighlights();
+        draggedShipLength = 0;
+        draggedShipElement = null;
       });
 
       harborGrid.appendChild(card);
@@ -161,6 +163,7 @@ export const SetupController = (() => {
   const handleDrop = (e) => {
     e.preventDefault();
     clearHighlights();
+    if (!draggedShipLength || draggedShipLength === 0) return;
     const x = parseInt(e.target.dataset.x);
     const y = parseInt(e.target.dataset.y);
 

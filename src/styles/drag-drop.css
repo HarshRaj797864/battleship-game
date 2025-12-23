@@ -119,6 +119,12 @@
 .ship-hull {
   /* Slightly lift the ship off the glass */
   filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8));
+  
+  position: absolute;
+  
+  /* CRITICAL: Makes the image invisible to mouse clicks/drags */
+  pointer-events: none; 
+  
   z-index: 10;
 }
 
