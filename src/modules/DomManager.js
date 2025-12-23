@@ -76,5 +76,44 @@ export const DomManager = (() => {
       }
     });
   };
-  return { renderBoard, updateCell, disableBoard, enableBoard, bindEvents };
+  const renderDockyard = (fleetList) => {
+    const harbor = document.getElementById("fleet-harbor");
+    harbor.innerHTML = "";
+
+    fleetList.forEach((ship) => {
+      const card = document.createElement("div");
+      card.classList.add("ship-card");
+      card.setAttribute("draggable", "true");
+      card.dataset.ship = ship.name.toLowerCase();
+      card.dataset.length = ship.length;
+
+      card.innerHTML = `
+        <div class="ship-content">
+          <img src="./assets/${ship.name.toLowerCase()}.svg" class="ship-image" alt="${ship.name}">
+          <div class="ship-info">${ship.name} (${ship.length})</div>
+        </div>
+      `;
+
+      card.addEventListener("dragstart", (e) => {
+        card.classList.add("dragging");
+
+        e.dataTransfer.setData("text/plain", ship.name.toLowerCase());
+        e.dataTransfer.setData("length", ship.length);
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
+      });
+
+      harbor.appendChild(card);
+    });
+  };
+  return {
+    renderBoard,
+    updateCell,
+    disableBoard,
+    enableBoard,
+    bindEvents,
+    renderDockyard,
+  };
 })();

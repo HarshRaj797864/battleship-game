@@ -49,24 +49,28 @@
     </div>
 
     <div id="setup-container" class="hidden">
-      <h1 class="main-title" style="font-size: 4rem">DEPLOY FLEET</h1>
-
-      <div class="setup-content">
-        <div class="harbor-section">
-          <div class="harbor-header">
-            <h2>DOCKYARD</h2>
-            <button id="rotate-btn" class="btn-secondary">AXIS: X</button>
-          </div>
-
-          <div id="fleet-harbor" class="harbor-grid"></div>
-        </div>
-
-        <div class="board-wrapper">
-          <h2>FRIENDLY WATERS</h2>
-          <div id="setup-board" class="board"></div>
-        </div>
+  <div class="setup-content">
+    
+    <div class="board-wrapper">
+      <div class="axis-controls">
+         <button id="rotate-btn" class="btn-tactical">AXIS: X (Horizontal)</button>
       </div>
+      
+      <div id="setup-board" class="board tactical-board"></div>
+      
+      <div class="action-buttons">
+        <button id="reset-btn" class="btn-tactical-small">RESET</button>
+        <button id="finish-setup-btn" class="btn-tactical-small disabled" disabled>CONFIRM</button>
+      </div>
+    </div>
 
+    <div class="harbor-section">
+      <div id="fleet-harbor" class="harbor-grid">
+        </div>
+    </div>
+
+  </div>
+</div>
       <button id="finish-setup-btn" class="btn-primary disabled" disabled>
         ENTER COMBAT
       </button>
