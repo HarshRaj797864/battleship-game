@@ -184,32 +184,11 @@ input.invalid { border-color: var(--color-hit); }
 
 .btn-primary:hover { filter: brightness(0.9); }
 
-/* --- START SCREEN --- */
-#start-game-wrapper {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 3rem;
-  background-color: white;
-}
 
-#start-game-wrapper h1 {
-  font-size: 8rem;
-  font-family: 'Zen Dots', cursive;
-  color: var(--color-sunk);
-  text-transform: uppercase;
-  letter-spacing: 0.5rem;
-}
 
-#start-btn {
-  font-size: 2rem;
-  padding: 1.5rem 4rem;
-  max-width: 300px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
+
+
+
 
 /* --- GLOBAL UI & DROPDOWNS --- */
 #global-ui {
@@ -283,8 +262,8 @@ body.retro .cell { border: 1px solid #333; }
 body.retro .board { border-color: #33ff00; }
 
 body.retro .btn-primary {
-  background-color: #33ff00;
-  color: black;
+  background-color: transparent;
+  color: rgb(247, 244, 244);
   border-radius: 0;
 }
 
@@ -293,4 +272,177 @@ body.retro dialog {
   border: 2px solid #33ff00;
   color: #33ff00;
   border-radius: 0;
+}
+
+/* --- GLOBAL BUTTON FILL ANIMATION (CENTER-OUT) --- */
+
+/* 1. Base settings for ALL buttons */
+.btn-primary, 
+.btn-secondary, 
+#start-btn, 
+#restart-btn, 
+#finish-setup-btn, 
+#rotate-btn,
+#settings-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1; /* Establishes stacking context */
+  transition: color 0.4s ease-in-out, border-color 0.4s ease;
+  vertical-align: middle;
+}
+
+/* 2. The "Hidden" Fill Layer */
+.btn-primary::before, 
+.btn-secondary::before, 
+#start-btn::before, 
+#restart-btn::before, 
+#finish-setup-btn::before, 
+#rotate-btn::before,
+#settings-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Default Fill Color (Dark for Ocean Theme) */
+  background-color: var(--color-sunk); 
+  
+  /* ANIMATION LOGIC: Center Out */
+  transform: scaleX(0); 
+  transform-origin: center; /* This makes it grow from the middle */
+  
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: -1; /* Sits behind text, but on top of button background */
+}
+
+/* 3. The Hover Trigger */
+.btn-primary:hover::before, 
+.btn-secondary:hover::before, 
+#start-btn:hover::before, 
+#restart-btn:hover::before, 
+#finish-setup-btn:hover::before, 
+#rotate-btn:hover::before,
+#settings-btn:hover::before {
+  transform: scaleX(1); /* Expands sideways from center */
+}
+
+/* 4. Text & Border Color on Hover */
+.btn-primary:hover, 
+.btn-secondary:hover, 
+#start-btn:hover,
+#rotate-btn:hover,
+#settings-btn:hover {
+  color: white;
+  border-color: var(--color-sunk);
+}
+
+/* --- RETRO THEME ANIMATION OVERRIDES --- */
+
+/* 5. Force the Fill Color to Neon Green in Retro Mode */
+body.retro .btn-primary::before, 
+body.retro .btn-secondary::before, 
+body.retro #start-btn::before,
+body.retro #restart-btn::before,
+body.retro #finish-setup-btn::before,
+body.retro #rotate-btn::before,
+body.retro #settings-btn::before {
+  background-color: var(--color-ship) !important; /* Force Green Fill */
+}
+
+/* 6. Force Text to Black on Hover in Retro Mode */
+body.retro .btn-primary:hover, 
+body.retro .btn-secondary:hover, 
+body.retro #start-btn:hover,
+body.retro #rotate-btn:hover,
+body.retro #settings-btn:hover {
+  color: black !important; /* Black text on Green Fill */
+  border-color: var(--color-ship) !important;
+  box-shadow: 0 0 15px var(--color-ship); /* Glow */
+}
+
+
+#settings-btn {
+  background-color: transparent;
+  border: none;                 
+  color: white;                  
+  
+  
+  width: 5rem;                   
+  height: 5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#settings-btn svg {
+  width: 9rem;  
+  height: 9rem;
+  transition: transform 0.3s ease; 
+}
+
+#settings-btn:hover {
+  color: var(--color-ship); 
+  transform: rotate(90deg); 
+}
+
+
+
+#settings-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+/* --- GITHUB FLOATING ICON --- */
+
+
+#github-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  
+  
+  text-decoration: none;
+  background-color: transparent;
+  
+  
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  
+  color: white; 
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#github-btn svg {
+  width: 9rem;
+  height: 9rem;
+  fill: currentColor; 
+}
+
+
+#github-btn:hover {
+  color: var(--color-ship); 
+  transform: rotate(360deg); 
+}
+
+
+
+
+body.retro #settings-btn,
+body.retro #github-btn {
+  color: #33ff00;
+}
+
+
+body.retro #settings-btn:hover,
+body.retro #github-btn:hover {
+  color: #33ff00;
+  text-shadow: 0 0 10px #33ff00;
+  filter: drop-shadow(0 0 5px #33ff00);
 }

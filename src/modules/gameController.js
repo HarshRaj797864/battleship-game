@@ -1,6 +1,5 @@
 import { DomManager } from "./DomManager";
 import { getPlayer } from "./player";
-import { ScreenController } from "./ScreenController";
 import { Ship } from "./ship";
 
 export const gameController = (() => {
@@ -10,6 +9,14 @@ export const gameController = (() => {
     activePlayer: null,
     isGameOver: false,
     isProcessing: false,
+  };
+
+  // 1. Placeholder for the UI function
+  let gameOverHandler = null;
+
+  // 2. Method to receive the UI function safely
+  const bindGameOverHandler = (callback) => {
+    gameOverHandler = callback;
   };
 
   const placeShipsRandomly = (player) => {
@@ -56,16 +63,22 @@ export const gameController = (() => {
       state.playerTwo.randomAttack(p1Board);
 
       const { x, y, missed } = p1Board.getAttackedShots().at(-1);
-      const ship = !missed && p1Board.getShipAt(x, y);
-      const shipCoords = ship?.isSunk()
-        ? p1Board.getShipCoordinates(ship)
-        : null;
+
+      // Safety Check: ensure ship exists before accessing methods
+      const ship = !missed ? p1Board.getShipAt(x, y) : null;
+
+      // Use optional chaining for safety
+      const shipCoords =
+        ship && typeof ship.isSunk === "function" && ship.isSunk()
+          ? p1Board.getShipCoordinates(ship)
+          : null;
 
       DomManager.updateCell("player-board", x, y, !missed, shipCoords);
 
       if (p1Board.allShipSunk()) {
         state.isGameOver = true;
-        ScreenController.showGameOver(state.playerTwo.name);
+        // 3. Call the handler instead of the imported module
+        if (gameOverHandler) gameOverHandler(state.playerTwo.name);
       } else {
         state.activePlayer = state.playerOne;
         state.isProcessing = false;
@@ -87,15 +100,19 @@ export const gameController = (() => {
 
     if (hit !== null) {
       const ship = p2Board.getShipAt(x, y);
-      const shipCoords = ship?.isSunk()
-        ? p2Board.getShipCoordinates(ship)
-        : null;
+
+      // Use optional chaining for safety
+      const shipCoords =
+        ship && typeof ship.isSunk === "function" && ship.isSunk()
+          ? p2Board.getShipCoordinates(ship)
+          : null;
 
       DomManager.updateCell("computer-board", x, y, hit, shipCoords);
 
       if (p2Board.allShipSunk()) {
         state.isGameOver = true;
-        ScreenController.showGameOver(state.playerOne.name);
+        // 3. Call the handler instead of the imported module
+        if (gameOverHandler) gameOverHandler(state.playerOne.name);
       } else {
         state.activePlayer = state.playerTwo;
         playComputerTurn();
@@ -121,6 +138,7 @@ export const gameController = (() => {
     playComputerTurn,
     placeShipsRandomly,
     resetGame,
+    bindGameOverHandler, // Exporting the new connection point
     state,
   };
 })();

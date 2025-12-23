@@ -20,6 +20,7 @@ const ScreenController = (() => {
   };
 
   const init = () => {
+    gameController.bindGameOverHandler(showGameOver);
     el.startBtn.onclick = () => el.startModal.showModal();
     el.nameInput.oninput = validateInput;
 

@@ -1,5 +1,6 @@
 import "./styles/style.css";
 import "./styles/setupDnD.css";
+import "./styles/startScreen.css";
 import { ScreenController } from "./modules/ScreenController";
 
 document.addEventListener("DOMContentLoaded", () => {

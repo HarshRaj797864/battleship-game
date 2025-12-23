@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Nunito:wght@800&family=Source+Sans+Pro:wght@900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Nunito:wght@800&family=Source+Sans+Pro:wght@900&family=Zen+Dots&display=swap"
       rel="stylesheet"
     />
 
@@ -21,10 +21,18 @@
     <title>BattleShip</title>
   </head>
   <body>
-
     <nav id="global-ui">
       <div class="dropdown">
-        <button id="settings-btn" class="btn-secondary">⚙️ Settings</button>
+        <button id="settings-btn" class="btn-secondary" aria-label="Settings">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M20.1 9.2214C18.29 9.2214 17.55 7.9414 18.45 6.3714C18.97 5.4614 18.66 4.3014 17.75 3.7814L16.02 2.7914C15.23 2.3214 14.21 2.6014 13.74 3.3914L13.63 3.5814C12.73 5.1514 11.25 5.1514 10.34 3.5814L10.23 3.3914C9.78 2.6014 8.76 2.3214 7.97 2.7914L6.24 3.7814C5.33 4.3014 5.02 5.4714 5.54 6.3814C6.45 7.9414 5.71 9.2214 3.9 9.2214C2.86 9.2214 2 10.0714 2 11.1214V12.8814C2 13.9214 2.85 14.7814 3.9 14.7814C5.71 14.7814 6.45 16.0614 5.54 17.6314C5.02 18.5414 5.33 19.7014 6.24 20.2214L7.97 21.2114C8.76 21.6814 9.78 21.4014 10.25 20.6114L10.36 20.4214C11.26 18.8514 12.74 18.8514 13.65 20.4214L13.76 20.6114C14.23 21.4014 15.25 21.6814 16.04 21.2114L17.77 20.2214C18.68 19.7014 18.99 18.5314 18.47 17.6314C17.56 16.0614 18.3 14.7814 20.11 14.7814C21.15 14.7814 22.01 13.9314 22.01 12.8814V11.1214C22 10.0814 21.15 9.2214 20.1 9.2214ZM12 15.2514C10.21 15.2514 8.75 13.7914 8.75 12.0014C8.75 10.2114 10.21 8.7514 12 8.7514C13.79 8.7514 15.25 10.2114 15.25 12.0014C15.25 13.7914 13.79 15.2514 12 15.2514Z" fill="currentColor"/>
+          </svg>
+        </button>
         <div id="settings-menu" class="dropdown-content">
           <button data-theme="default">🌊 Ocean Theme</button>
           <button data-theme="retro">👾 Retro Theme</button>
@@ -32,37 +40,34 @@
       </div>
     </nav>
 
-
     <div id="start-game-wrapper">
-      <h1 class="main-title">BATTLESHIP</h1>
+      <h1 class="main-title">Battleship</h1>
       <button id="start-btn" class="btn-primary">Start Game</button>
     </div>
 
-
     <div id="setup-container" class="hidden">
-        <h1 class="main-title" style="font-size: 4rem;">DEPLOY FLEET</h1>
-        
-        <div class="setup-content">
-            <div class="harbor-section">
-                <div class="harbor-header">
-                    <h2>DOCKYARD</h2>
-                    <button id="rotate-btn" class="btn-secondary">AXIS: X</button>
-                </div>
-                
-                <div id="fleet-harbor" class="harbor-grid"></div>
-            </div>
+      <h1 class="main-title" style="font-size: 4rem">DEPLOY FLEET</h1>
 
-            <div class="board-wrapper">
-                <h2>FRIENDLY WATERS</h2>
-                <div id="setup-board" class="board"></div>
-            </div>
+      <div class="setup-content">
+        <div class="harbor-section">
+          <div class="harbor-header">
+            <h2>DOCKYARD</h2>
+            <button id="rotate-btn" class="btn-secondary">AXIS: X</button>
+          </div>
+
+          <div id="fleet-harbor" class="harbor-grid"></div>
         </div>
 
-        <button id="finish-setup-btn" class="btn-primary disabled" disabled>
-            ENTER COMBAT
-        </button>
-    </div>
+        <div class="board-wrapper">
+          <h2>FRIENDLY WATERS</h2>
+          <div id="setup-board" class="board"></div>
+        </div>
+      </div>
 
+      <button id="finish-setup-btn" class="btn-primary disabled" disabled>
+        ENTER COMBAT
+      </button>
+    </div>
 
     <div id="game-container" class="hidden">
       <header>
@@ -79,7 +84,6 @@
         </div>
       </div>
     </div>
-
 
     <dialog id="start-modal">
       <div class="modal-content">
@@ -101,7 +105,6 @@
       </div>
     </dialog>
 
-
     <dialog id="game-over-modal">
       <div class="modal-content">
         <h2 id="winner-display">PLAYER WINS!</h2>
@@ -110,5 +113,10 @@
       </div>
     </dialog>
 
+    <a id="github-btn" href="https://github.com/HarshRaj797864" target="_blank" aria-label="GitHub">
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,2A10,10,0,0,0,8.84,21.5c.5.08.66-.23.66-.5V19.31C6.73,19.91,6.14,18,6.14,18A2.69,2.69,0,0,0,5,16.5c-.91-.62.07-.6.07-.6a2.1,2.1,0,0,1,1.53,1,2.15,2.15,0,0,0,2.91.83,2.16,2.16,0,0,1,.63-1.34C8,16.17,5.62,15.31,5.62,11.5a3.87,3.87,0,0,1,1-2.71,3.58,3.58,0,0,1,.1-2.64s.84-.27,2.75,1a9.63,9.63,0,0,1,5,0c1.91-1.29,2.75-1,2.75-1a3.58,3.58,0,0,1,.1,2.64,3.87,3.87,0,0,1,1,2.71c0,3.82-2.34,4.66-4.57,4.91a2.39,2.39,0,0,1,.69,1.85V21c0,.27.16.59.67.5A10,10,0,0,0,12,2Z"/>
+      </svg>
+    </a>
   </body>
 </html>
