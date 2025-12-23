@@ -1,3 +1,4 @@
+import { SHIP_ICONS } from "./shipIcons";
 export const DomManager = (() => {
   const renderBoard = (gameBoard, containerId, isEnemy) => {
     // first clear the board before painting
@@ -87,9 +88,11 @@ export const DomManager = (() => {
       card.dataset.ship = ship.name.toLowerCase();
       card.dataset.length = ship.length;
 
+      const iconSrc = SHIP_ICONS[ship.name.toLowerCase()];
+
       card.innerHTML = `
         <div class="ship-content">
-          <img src="./assets/${ship.name.toLowerCase()}.svg" class="ship-image" alt="${ship.name}">
+          <img src="./assets/${iconSrc}.svg" class="ship-image" alt="${ship.name}">
           <div class="ship-info">${ship.name} (${ship.length})</div>
         </div>
       `;
@@ -108,6 +111,52 @@ export const DomManager = (() => {
       harbor.appendChild(card);
     });
   };
+
+  const renderFleet = (gameBoard, containerId, isEnemy) => {
+    const container = document.getElementById(containerId);
+
+    // 1. Cleanup old ship images to prevent duplicates
+    const oldShips = container.querySelectorAll(".ship-hull");
+    oldShips.forEach((img) => img.remove());
+
+    const ships = gameBoard.getShips();
+
+    ships.forEach(({ ship, x, y, isVertical }) => {
+      if (isEnemy && !ship.isSunk()) return;
+
+      const shipImg = document.createElement("img");
+      shipImg.src = SHIP_ICONS[ship.name.toLowerCase()] || "";
+      shipImg.classList.add("ship-hull");
+
+      if (ship.isSunk()) {
+        shipImg.classList.add("sunk-overlay");
+      }
+
+      const CELL_SIZE = 60;
+      const GAP = 1;
+
+      const longSide = CELL_SIZE * ship.length + GAP * (ship.length - 1);
+      const shortSide = CELL_SIZE;
+
+      shipImg.style.width = `${longSide}px`;
+      shipImg.style.height = `${shortSide}px`;
+
+      const topPos = x * (CELL_SIZE + GAP);
+      const leftPos = y * (CELL_SIZE + GAP);
+
+      shipImg.style.position = "absolute";
+      shipImg.style.top = `${topPos}px`;
+      shipImg.style.left = `${leftPos}px`;
+
+      if (isVertical) {
+        shipImg.style.transformOrigin = `${shortSide / 2}px ${shortSide / 2}px`;
+        shipImg.style.transform = "rotate(90deg)";
+      }
+
+      container.appendChild(shipImg);
+    });
+  };
+
   return {
     renderBoard,
     updateCell,
@@ -115,5 +164,6 @@ export const DomManager = (() => {
     enableBoard,
     bindEvents,
     renderDockyard,
+    renderFleet,
   };
 })();

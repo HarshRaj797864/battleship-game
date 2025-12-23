@@ -38,10 +38,88 @@
 }
 
 .tactical-board {
-  /* The Grid itself */
-  border: 1px solid rgba(50, 255, 255, 0.3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  background: rgba(6, 9, 12, 0.8);
+  position: relative; /* Essential for containing the radar */
+  display: grid;
+  
+  /* 1. BIGGER GRID: Increased from 35px to 50px per cell */
+  grid-template-columns: repeat(10, 60px);
+  grid-template-rows: repeat(10, 60px);
+  
+  gap: 1px; /* The gap creates the grid lines */
+  
+  /* 2. GLASS EFFECT CONTAINER */
+  background-color: rgba(255, 255, 255, 0.05); /* Very faint white tint */
+  backdrop-filter: blur(5px); /* Blurs whatever is behind it */
+  border: 1px solid rgba(100, 255, 255, 0.2); /* Subtle cyan border */
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.8), /* Deep shadow */
+    inset 0 0 20px rgba(0, 255, 255, 0.05); /* Inner glow */
+    
+  border-radius: 8px;
+  overflow: hidden; /* Clips the radar so it stays inside the board */
+}
+
+.tactical-board::before {
+  content: '';
+  position: absolute;
+  z-index: 0; /* Sits behind the cells */
+  
+  /* Center the radar */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Make it large enough to cover the corners when rotating */
+  width: 150%;
+  height: 150%;
+  
+  /* The Radar Gradient: Transparent -> Cyan Fade */
+  background: conic-gradient(
+    from 0deg, 
+    transparent 0deg, 
+    transparent 280deg, 
+    rgba(0, 255, 255, 0.15) 360deg
+  );
+  
+  border-radius: 50%; /* Circular sweep */
+  animation: radar-spin 4s linear infinite;
+  pointer-events: none; /* Let clicks pass through */
+}
+
+@keyframes radar-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.cell {
+  position: relative;
+  z-index: 1; /* Sits ON TOP of the radar */
+  
+  /* 3. TRANSPARENT BACKGROUND */
+  /* This is crucial! It allows the radar to be seen "under" the glass */
+  background-color: rgba(6, 9, 12, 0.4); 
+  
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.cell.hover-valid {
+  background-color: rgba(0, 255, 0, 0.3) !important;
+  box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+/* Invalid Drop Zone Highlight */
+.cell.hover-invalid {
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+/* --- SHIP ON BOARD STYLING --- */
+/* Ensure the ship overlays sit nicely on the bigger grid */
+.ship-hull {
+  /* Slightly lift the ship off the glass */
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8));
+  z-index: 10;
 }
 
 /* Controls above/below board */
@@ -83,7 +161,7 @@
   display: flex;
   flex-direction: column;
   /* Fixed width for the sidebar look */
-  width: 280px; 
+  width: 22rem; 
   /* Scrollable if screen is short */
   max-height: 80vh; 
   overflow-y: auto;
@@ -240,4 +318,75 @@
     height: 100px;
     flex-shrink: 0;
   }
+}
+#reset-btn, #finish-setup-btn {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+.action-buttons {
+  display: flex;
+  gap: 2rem; /* Space between buttons */
+  width: 100%;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Target both buttons to make them equal */
+.action-buttons button {
+  flex: 1; /* This forces them to share width equally */
+  max-width: 200px; /* Prevents them from getting too huge */
+  height: 50px; /* Fixed height for uniformity */
+  
+  /* Ensure text is centered */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Zen Dots', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* drag-drop.css */
+
+/* --- AXIS CONTROL BUTTON --- */
+#rotate-btn {
+  /* Make it wide enough to look like a header bar */
+  width: 100%; 
+  max-width: 400px; /* Limit width so it doesn't get too crazy on big screens */
+  
+  /* Taller touch target */
+  height: 50px; 
+  
+  /* Bigger Font */
+  font-family: 'Zen Dots', cursive;
+  font-size: 1.4rem; 
+  letter-spacing: 3px;
+  
+  /* Centers the text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Add space below it so it doesn't crowd the grid */
+  margin-bottom: 1.5rem; 
+  margin-top: 1.5rem;
+  
+  /* Ensure it has the base tactical button styles */
+  background: transparent;
+  border: 2px solid #334455; /* Thicker border */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+#rotate-btn:hover {
+  border-color: var(--color-ship);
+  color: var(--color-ship);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+  background-color: rgba(0, 255, 255, 0.05);
 }

@@ -64,6 +64,7 @@ export const SetupController = (() => {
 
       renderHarbor();
       renderBoard();
+      DomManager.renderFleet(player.board, "setup-board", false);
       updateRotateButton();
       toggleFinishButton();
     };
@@ -164,11 +165,14 @@ export const SetupController = (() => {
     const y = parseInt(e.target.dataset.y);
 
     try {
-      player.board.placeShip(new Ship(draggedShipLength), x, y, !isHorizontal);
+      const newShip = new Ship(draggedShipLength);
+      newShip.name = draggedShipElement.dataset.ship;
+      player.board.placeShip(newShip, x, y, !isHorizontal);
       shipsToPlace.splice(parseInt(draggedShipElement.dataset.index), 1);
       renderHarbor();
       renderBoard();
       toggleFinishButton();
+      DomManager.renderFleet(player.board, "setup-board", false);
     } catch {
       console.log("Invalid Placement");
     }

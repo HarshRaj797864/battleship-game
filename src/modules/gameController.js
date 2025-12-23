@@ -20,7 +20,13 @@ export const gameController = (() => {
   };
 
   const placeShipsRandomly = (player) => {
-    const fleet = [5, 4, 3, 3, 2];
+    const fleet = [
+      { name: "Carrier", length: 5 },
+      { name: "Battleship", length: 4 },
+      { name: "Cruiser", length: 3 },
+      { name: "Submarine", length: 3 },
+      { name: "Destroyer", length: 2 },
+    ];
     fleet.forEach((len) => {
       let placed = false;
       let attempts = 0;
@@ -48,6 +54,8 @@ export const gameController = (() => {
   const startGame = () => {
     DomManager.renderBoard(state.playerOne.board, "player-board", false);
     DomManager.renderBoard(state.playerTwo.board, "computer-board", true);
+    DomManager.renderFleet(state.playerOne.board, "player-board", false);
+    DomManager.renderFleet(state.playerTwo.board, "computer-board", true);
     state.activePlayer = state.playerOne;
     state.isGameOver = false;
     state.isProcessing = false;
@@ -72,8 +80,10 @@ export const gameController = (() => {
         ship && typeof ship.isSunk === "function" && ship.isSunk()
           ? p1Board.getShipCoordinates(ship)
           : null;
-
       DomManager.updateCell("player-board", x, y, !missed, shipCoords);
+      if (ship && ship.isSunk()) {
+        DomManager.renderFleet(p1Board, "player-board", false);
+      }
 
       if (p1Board.allShipSunk()) {
         state.isGameOver = true;
@@ -108,6 +118,10 @@ export const gameController = (() => {
           : null;
 
       DomManager.updateCell("computer-board", x, y, hit, shipCoords);
+
+      if (ship && ship.isSunk()) {
+        DomManager.renderFleet(p2Board, "computer-board", true);
+      }
 
       if (p2Board.allShipSunk()) {
         state.isGameOver = true;

@@ -57,10 +57,8 @@ describe("tests for gameController", () => {
       expect(state.playerOne.type).toEqual("human");
       expect(state.playerTwo.type).toEqual("computer");
 
-      // FIXED: Human has 0 ships initially (waiting for Drag & Drop)
       expect(state.playerOne.board.getShips().length).toEqual(0);
 
-      // Computer still has 5 randomized ships
       expect(state.playerTwo.board.getShips().length).toEqual(5);
     });
 
