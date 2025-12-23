@@ -8,6 +8,10 @@ const ScreenController = (() => {
   const startForm = document.getElementById("start-form");
   const nameInput = document.getElementById("player-name");
   const nameError = document.querySelector(".error-message");
+  // game over DOM
+  const gameOverModal = document.getElementById("game-over-modal");
+  const winnerDisplay = document.getElementById("winner-display");
+  const restartBtn = document.getElementById("restart-btn");
 
   const init = () => {
     setupEventListeners();
@@ -35,6 +39,14 @@ const ScreenController = (() => {
         gameController.initializeGame(playerName);
       }
     });
+    restartBtn.addEventListener("click", () => {
+      gameOverModal.close();
+
+      gameContainer.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+
+      gameController.resetGame();
+    });
   };
 
   const validateNameInput = () => {
@@ -61,7 +73,11 @@ const ScreenController = (() => {
     }
   };
 
-  return { init };
+  const showGameOver = (winnerName) => {
+    winnerDisplay.textContent = `${winnerName.toUpperCase()} WINS!`;
+    gameOverModal.showModal();
+  };
+  return { init, showGameOver };
 })();
 
 export { ScreenController };

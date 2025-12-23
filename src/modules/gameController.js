@@ -1,6 +1,6 @@
 import { DomManager } from "./DomManager";
 import { getPlayer } from "./player";
-// import { createGameboard } from "./gameboard";
+import { ScreenController } from "./ScreenController";
 import { Ship } from "./ship";
 
 export const gameController = (() => {
@@ -71,7 +71,12 @@ export const gameController = (() => {
         !shotStatus.missed,
         shipCoords
       );
-      if (!state.playerOne.board.allShipSunk()) {
+      if (state.playerOne.board.allShipSunk()) {
+        // Human ships are gone. Computer (Player Two) wins.
+        state.isGameOver = true;
+        ScreenController.showGameOver(state.playerTwo.name);
+      } else {
+        // Game continues: Pass turn back to Human
         state.activePlayer = state.playerOne;
         state.isProcessing = false;
         DomManager.enableBoard("computer-board");
@@ -99,7 +104,7 @@ export const gameController = (() => {
       DomManager.updateCell("computer-board", x, y, attacked, coords);
       if (state.playerTwo.board.allShipSunk()) {
         state.isGameOver = true;
-        DomManager.disableBoard("computer-board");
+        ScreenController.showGameOver(state.playerOne.name);
         return;
       }
       state.activePlayer = state.playerTwo;
@@ -108,11 +113,21 @@ export const gameController = (() => {
     return;
   };
 
+  const resetGame = () => {
+    state.playerOne = null;
+    state.playerTwo = null;
+    state.isGameOver = false;
+    state.activePlayer = null;
+
+    document.getElementById("player-board").innerHTML = "";
+    document.getElementById("computer-board").innerHTML = "";
+  };
   return {
     state,
     placeShipsRandomly,
     initializeGame,
     playRound,
     playComputerTurn,
+    resetGame,
   };
 })();

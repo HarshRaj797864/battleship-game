@@ -1,6 +1,7 @@
 import { gameController } from "../src/modules/gameController";
 import { getPlayer } from "../src/modules/player";
 import { DomManager } from "../src/modules/DomManager";
+import { ScreenController } from "../src/modules/ScreenController";
 
 jest.mock("../src/modules/DomManager", () => ({
   DomManager: {
@@ -9,6 +10,12 @@ jest.mock("../src/modules/DomManager", () => ({
     disableBoard: jest.fn(),
     enableBoard: jest.fn(),
     bindEvents: jest.fn(),
+  },
+}));
+jest.mock("../src/modules/ScreenController", () => ({
+  ScreenController: {
+    init: jest.fn(),
+    showGameOver: jest.fn(),
   },
 }));
 
