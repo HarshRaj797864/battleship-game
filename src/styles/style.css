@@ -173,3 +173,133 @@ h2 {
   cursor: not-allowed;
   filter: grayscale(100%) brightness(0.8);
 }
+
+/* phase 3 */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+dialog {
+  margin: auto;
+  border: none;
+  border-radius: 1rem;
+  padding: 3rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  
+  /* Match your clean aesthetic */
+  background-color: white;
+  color: var(--color-sunk); 
+  font-family: 'Noto Sans', sans-serif;
+  
+  /* Animation */
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Class to trigger animation (we will toggle this in JS) */
+dialog[open] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 900;
+  color: var(--color-sunk);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+label {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+input[type="text"] {
+  padding: 1rem;
+  border: 2px solid hsl(0, 0%, 80%);
+  border-radius: 0.5rem;
+  font-size: 1.6rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus {
+  border-color: var(--color-ship); /* Blue highlight */
+}
+
+/* Validation Styling */
+input.invalid {
+  border-color: var(--color-hit); /* Red border on error */
+}
+
+.error-message {
+  font-size: 1.2rem;
+  color: var(--color-hit);
+  min-height: 1.5rem; /* Prevents layout jump */
+  font-weight: 700;
+}
+
+/* Button Styling */
+.btn-primary {
+  width: 100%;
+  padding: 1.2rem;
+  background-color: var(--color-ship); /* Blue button */
+  color: white; /* White text */
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#start-game-wrapper {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    background-color: white; /* Keeping your clean aesthetic */
+}
+
+#start-game-wrapper h1 {
+    font-size: 8rem;
+    font-family: 'Zen Dots', cursive; /* Assuming you want the sci-fi font here */
+    color: var(--color-sunk);
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+/* Adjust button size for the main start button */
+#start-btn {
+    font-size: 2rem;
+    padding: 1.5rem 4rem;
+    max-width: 300px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Optional: Adjust game header size since it's no longer the landing page */
+.game-header {
+    font-size: 3rem;
+    margin: 2rem 0;
+    text-align: center;
+}

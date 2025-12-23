@@ -1,8 +1,10 @@
 import "./styles/style.css";
-import { gameController } from "./modules/gameController";
+import { ScreenController } from "./modules/ScreenController"; // Import the new controller
 
 document.addEventListener("DOMContentLoaded", () => {
-  gameController.initializeGame("Commander");
+  // We no longer call gameController.initializeGame directly.
+  // We let the ScreenController handle the UI flow.
+  ScreenController.init();
 
-  console.log("System initialized. Waiting for orders.");
+  console.log("System initialized. Waiting for user input via Modal.");
 });

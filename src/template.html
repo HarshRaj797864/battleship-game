@@ -26,7 +26,12 @@
 </head>
 <body>
     
-    <div id="game-container">
+    <div id="start-game-wrapper">
+        <h1 class="main-title">BATTLESHIP</h1>
+        <button id="start-btn" class="btn-primary">Start Game</button>
+    </div>
+    
+    <div id="game-container" class="hidden">
       <h1>BATTLESHIP</h1>
       <div class="board-section">
         <div class="board-wrapper">
@@ -39,7 +44,19 @@
         </board-wrapper>
       </div>
     </div>
-    
+    <dialog id="start-modal">
+        <div class="modal-content">
+            <h2>Enter the War Room</h2>
+            <form id="start-form" novalidate>
+                <div class="input-group">
+                    <label for="player-name">Admiral Name</label>
+                    <input type="text" id="player-name" placeholder="e.g. Commander Sheppard" required minlength="3">
+                    <span class="error-message"></span>
+                </div>
+                <button type="submit" class="btn-primary">Deploy Fleet</button>
+            </form>
+        </div>
+    </dialog>
     
 </body>
 </html>
