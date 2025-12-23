@@ -159,7 +159,7 @@
   object-fit: contain;
   
   /* Make SVGs white/cyan using filters */
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+  filter: invert(100%) drop-shadow(0 2px 3px rgba(0,0,0,0.8));
   margin-bottom: 5px;
 }
 

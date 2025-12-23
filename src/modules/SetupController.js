@@ -2,13 +2,34 @@ import { DomManager } from "./DomManager";
 import { Ship } from "./ship";
 import { gameController } from "./gameController";
 
+const FLEET_CONFIG = [
+  { name: "Carrier", length: 5 },
+  { name: "Battleship", length: 4 },
+  { name: "Cruiser", length: 3 },
+  { name: "Submarine", length: 3 },
+  { name: "Destroyer", length: 2 },
+];
+import carrierIcon from "../assets/carrier.svg";
+import battleshipIcon from "../assets/battleship.svg";
+import cruiserIcon from "../assets/cruiser.svg";
+import submarineIcon from "../assets/submarine.svg";
+import destroyerIcon from "../assets/destroyer.svg";
+
+const SHIP_ICONS = {
+  carrier: carrierIcon,
+  battleship: battleshipIcon,
+  cruiser: cruiserIcon,
+  submarine: submarineIcon,
+  destroyer: destroyerIcon,
+};
+
 export const SetupController = (() => {
   let player,
     isHorizontal = true,
     draggedShipLength = 0,
     draggedShipElement = null;
-  const fleet = [5, 4, 3, 3, 2];
-  let shipsToPlace = [...fleet];
+  // const fleet = [5, 4, 3, 3, 2];
+  let shipsToPlace = [];
 
   const setupContainer = document.getElementById("setup-container");
   const harborGrid = document.getElementById("fleet-harbor");
@@ -16,10 +37,11 @@ export const SetupController = (() => {
   const rotateBtn = document.getElementById("rotate-btn");
   const finishBtn = document.getElementById("finish-setup-btn");
   const gameContainer = document.getElementById("game-container");
+  // const resetBtn = document.getElementById("reset-btn");
 
   const init = (playerInstance) => {
     player = playerInstance;
-    shipsToPlace = [...fleet];
+    shipsToPlace = JSON.parse(JSON.stringify(FLEET_CONFIG));
     isHorizontal = true;
     draggedShipLength = 0;
     updateRotateButton();
@@ -54,30 +76,48 @@ export const SetupController = (() => {
 
   const renderHarbor = () => {
     harborGrid.innerHTML = "";
-    shipsToPlace.forEach((length, index) => {
-      const shipDiv = document.createElement("div");
-      shipDiv.classList.add("ship-draggable");
-      Object.assign(shipDiv, { draggable: true, textContent: length });
-      shipDiv.dataset.length = length;
-      shipDiv.dataset.index = index;
-      shipDiv.style.cssText = `width: ${length * 5}rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;`;
 
-      shipDiv.addEventListener("dragstart", (e) => {
-        draggedShipLength = length;
-        draggedShipElement = shipDiv;
-        shipDiv.classList.add("dragging");
-        e.dataTransfer.setData("text/plain", length);
+    shipsToPlace.forEach((ship, index) => {
+      // 1. Create the Card Container
+      const card = document.createElement("div");
+      card.classList.add("ship-card");
+      card.setAttribute("draggable", "true");
+
+      // Data attributes for logic and styling
+      card.dataset.ship = ship.name.toLowerCase();
+      card.dataset.length = ship.length;
+      card.dataset.index = index;
+
+      const iconSrc = SHIP_ICONS[ship.name.toLowerCase()];
+
+      card.innerHTML = `
+  <div class="ship-content">
+    <img src="${iconSrc}" class="ship-image" alt="${ship.name}">
+    <div class="ship-info">${ship.name} (${ship.length})</div>
+  </div>
+`;
+
+      // 3. Drag Events
+      card.addEventListener("dragstart", (e) => {
+        draggedShipLength = ship.length;
+        draggedShipElement = card; // Track the element so we can remove it later
+
+        card.classList.add("dragging");
+
+        // Pass length for valid placement check
+        e.dataTransfer.setData("text/plain", ship.length);
+        // Set drag image ghost (optional, but looks better)
+        // e.dataTransfer.setDragImage(card, 0, 0);
       });
 
-      shipDiv.addEventListener("dragend", () => {
-        shipDiv.classList.remove("dragging");
+      card.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
         clearHighlights();
       });
 
-      harborGrid.appendChild(shipDiv);
+      harborGrid.appendChild(card);
     });
   };
-
   const renderBoard = () => {
     DomManager.renderBoard(player.board, "setup-board", false);
     setupBoard.querySelectorAll(".cell").forEach((cell) => {

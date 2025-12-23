@@ -21,9 +21,24 @@ const ScreenController = (() => {
 
   const init = () => {
     gameController.bindGameOverHandler(showGameOver);
-    el.startBtn.onclick = () => el.startModal.showModal();
+    el.startBtn.onclick = () => {
+      el.startModal.showModal();
+      el.startModal.classList.remove("is-hidden");
+    };
     el.nameInput.oninput = validateInput;
+    el.startModal.addEventListener("click", (e) => {
+      const rect = el.startModal.getBoundingClientRect();
+      const isInDialog =
+        rect.top <= e.clientY &&
+        e.clientY <= rect.bottom &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.right;
 
+      if (!isInDialog) {
+        el.startModal.classList.add("is-hidden"); // Hide visually
+        el.startModal.close(); // Close natively
+      }
+    });
     el.startForm.onsubmit = (e) => {
       e.preventDefault();
       if (!validateInput()) return;
