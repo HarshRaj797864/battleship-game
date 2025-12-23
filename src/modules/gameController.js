@@ -99,6 +99,7 @@ export const gameController = (() => {
       DomManager.updateCell("computer-board", x, y, attacked, coords);
       if (state.playerTwo.board.allShipSunk()) {
         state.isGameOver = true;
+        DomManager.disableBoard("computer-board");
         return;
       }
       state.activePlayer = state.playerTwo;

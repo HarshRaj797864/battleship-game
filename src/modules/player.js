@@ -1,5 +1,5 @@
 import { createGameboard } from "./gameboard";
-import { Ship } from "./ship";
+// import { Ship } from "./ship";
 
 const getPlayer = (n, t = "human") => {
   let name = n;
