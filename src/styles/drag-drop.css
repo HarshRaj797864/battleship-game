@@ -390,3 +390,37 @@
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
   background-color: rgba(0, 255, 255, 0.05);
 }
+
+/* drag-drop.css */
+
+.harbor-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.harbor-header h3 {
+  font-family: 'Zen Dots', sans-serif;
+  font-size: 1.9rem;
+  color: white;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+/* THE HINT ANIMATION */
+.drag-hint {
+  font-family: 'Source Sans Pro', monospace;
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: var(--color-ship); /* Cyan */
+  letter-spacing: 1px;
+  
+  /* The Pulse Animation */
+  animation: pulse-text 2s infinite ease-in-out;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.6; text-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
+  50% { opacity: 1; text-shadow: 0 0 15px rgba(0, 255, 255, 0.8); }
+}
