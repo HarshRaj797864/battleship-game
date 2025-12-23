@@ -430,3 +430,53 @@
   0%, 100% { opacity: 0.6; text-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
   50% { opacity: 1; text-shadow: 0 0 15px rgba(0, 255, 255, 0.8); }
 }
+
+/* drag-drop.css */
+
+/* 1. New Wrapper for vertical stacking */
+.axis-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 1.5rem;   /* Top spacing for the whole block */
+  margin-bottom: 1rem;  /* Bottom spacing before the grid */
+}
+
+/* 2. Adjust the Button to lose its old huge margins */
+#rotate-btn {
+  /* Keep your existing size/font styles */
+  width: 100%;
+  max-width: 400px;
+  height: 50px;
+  font-family: 'Zen Dots', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid #334455;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  
+  /* OVERRIDE: Remove the old margins so the hint sits close */
+  margin: 0; 
+  margin-bottom: 0.5rem; 
+}
+
+/* 3. The New Hint Text */
+.click-hint {
+  font-family: 'Source Sans Pro', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #556677; /* Subtler than the ship hint */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  
+  /* Reuse the pulse animation */
+  animation: pulse-text 3s infinite ease-in-out;
+}

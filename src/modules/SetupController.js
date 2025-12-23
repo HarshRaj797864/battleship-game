@@ -50,6 +50,13 @@ export const SetupController = (() => {
     toggleFinishButton();
 
     rotateBtn.onclick = toggleAxis;
+    document.addEventListener("keydown", (e) => {
+      if (setupContainer.classList.contains("hidden")) return;
+
+      if (e.key.toLowerCase() === "r") {
+        toggleAxis();
+      }
+    });
     finishBtn.onclick = () => {
       setupContainer.classList.add("hidden");
       gameContainer.classList.remove("hidden");
