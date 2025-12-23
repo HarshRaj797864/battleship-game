@@ -37,7 +37,7 @@ export const SetupController = (() => {
   const rotateBtn = document.getElementById("rotate-btn");
   const finishBtn = document.getElementById("finish-setup-btn");
   const gameContainer = document.getElementById("game-container");
-  // const resetBtn = document.getElementById("reset-btn");
+  const resetBtn = document.getElementById("reset-btn");
 
   const init = (playerInstance) => {
     player = playerInstance;
@@ -54,6 +54,18 @@ export const SetupController = (() => {
       setupContainer.classList.add("hidden");
       gameContainer.classList.remove("hidden");
       gameController.startGame();
+    };
+    resetBtn.onclick = () => {
+      player.board.reset();
+
+      shipsToPlace = JSON.parse(JSON.stringify(FLEET_CONFIG));
+      draggedShipLength = 0;
+      isHorizontal = true;
+
+      renderHarbor();
+      renderBoard();
+      updateRotateButton();
+      toggleFinishButton();
     };
   };
 

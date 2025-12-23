@@ -1,9 +1,9 @@
 const createGameboard = () => {
-  const grid = Array(10)
+  let grid = Array(10)
     .fill(null)
     .map(() => Array(10).fill(null));
 
-  const ships = [];
+  let ships = [];
 
   const placeShip = (obj, x, y, isVertical = false) => {
     for (let i = 0; i < obj.length; i++) {
@@ -23,11 +23,11 @@ const createGameboard = () => {
         grid[x][y + i] = obj;
       }
     }
-    ships.push(obj);
+    ships.push({ ship: obj, x, y, isVertical, name: obj.name });
   };
 
   const getGrid = () => grid.map((row) => [...row]);
-  const attackedShots = [];
+  let attackedShots = [];
   const getAttackedShots = () => {
     return [...attackedShots];
   };
@@ -47,7 +47,7 @@ const createGameboard = () => {
   };
 
   const allShipSunk = () => {
-    return ships.every((m) => m.isSunk() === true);
+    return ships.every((m) => m.ship.isSunk() === true);
   };
 
   const getMissedAttacks = () => {
@@ -71,14 +71,15 @@ const createGameboard = () => {
   };
 
   const getShipAt = (x, y) => {
-    return ships.find((ship) => {
-      const coords = getShipCoordinates(ship);
-      return coords.some((coord) => {
-        return coord.x === x && coord.y === y;
-      });
-    });
+    return grid[x][y];
   };
-
+  const reset = () => {
+    grid = Array(10)
+      .fill(null)
+      .map(() => Array(10).fill(null));
+    ships = [];
+    attackedShots = [];
+  };
   return {
     getGrid,
     placeShip,
@@ -89,6 +90,7 @@ const createGameboard = () => {
     getShips,
     getShipCoordinates,
     getShipAt,
+    reset,
   };
 };
 

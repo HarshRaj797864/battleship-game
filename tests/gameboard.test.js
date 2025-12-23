@@ -204,8 +204,9 @@ describe("gameBoard", () => {
     const ship2 = new Ship(2);
     b.placeShip(ship, 0, 0, true);
     b.placeShip(ship2, 3, 3);
-    expect(b.getShips()).toContainEqual(ship);
-    expect(b.getShips()).toContainEqual(ship2);
+    const storedShips = b.getShips().map((entry) => entry.ship);
+    expect(storedShips).toContainEqual(ship);
+    expect(storedShips).toContainEqual(ship2);
   });
   test("getShipCoordinates stores coordinates of every ship in the gameBoard", () => {
     const b = createGameboard();
@@ -226,5 +227,20 @@ describe("gameBoard", () => {
     coords.forEach((coord) => {
       expect(b.getShipAt(coord.x, coord.y)).toBe(ship);
     });
+  });
+  test("reset clears grid, ships list, and shots", () => {
+    const b = createGameboard();
+    const ship = new Ship(3);
+    b.placeShip(ship, 0, 0);
+    b.receiveAttack(0, 0);
+    b.receiveAttack(9, 9);
+    b.reset();
+
+    const isGridEmpty = b
+      .getGrid()
+      .every((row) => row.every((cell) => cell === null));
+    expect(isGridEmpty).toBe(true);
+    expect(b.getShips().length).toBe(0);
+    expect(b.getAttackedShots().length).toBe(0);
   });
 });

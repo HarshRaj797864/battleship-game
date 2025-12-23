@@ -30,15 +30,15 @@ describe("tests for gameController", () => {
     });
 
     test("placeShipsRandomly places a ship successfully in the game board", () => {
-      const coords = board.getShipCoordinates(ships[0]);
+      const coords = board.getShipCoordinates(ships[0].ship);
       expect(ships.length).toBeGreaterThan(0);
       expect(coords.length).toBeGreaterThan(1);
     });
 
     test("placeShips places 5 different ships successfully in the game board", () => {
       expect(ships.length).toEqual(5);
-      ships.forEach((ship) => {
-        const c = board.getShipCoordinates(ship);
+      ships.forEach((shipWrapper) => {
+        const c = board.getShipCoordinates(shipWrapper.ship);
         expect(c.length).toBeGreaterThan(0);
       });
     });
