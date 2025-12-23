@@ -1,7 +1,6 @@
 import { gameController } from "../src/modules/gameController";
 import { getPlayer } from "../src/modules/player";
 import { DomManager } from "../src/modules/DomManager";
-import { ScreenController } from "../src/modules/ScreenController";
 
 jest.mock("../src/modules/DomManager", () => ({
   DomManager: {
@@ -45,24 +44,41 @@ describe("tests for gameController", () => {
     });
   });
 
-  describe("tests for initializeGame", () => {
+  describe("tests for initPlayers", () => {
     let state;
 
     beforeEach(() => {
       jest.clearAllMocks();
-      gameController.initializeGame("Harsh");
+      gameController.initPlayers("Harsh");
       state = gameController.state;
     });
 
     test("all the conditions for initial state of game are met", () => {
       expect(state.playerOne.type).toEqual("human");
       expect(state.playerTwo.type).toEqual("computer");
-      expect(state.playerOne.board.getShips().length).toEqual(5);
+
+      // FIXED: Human has 0 ships initially (waiting for Drag & Drop)
+      expect(state.playerOne.board.getShips().length).toEqual(0);
+
+      // Computer still has 5 randomized ships
       expect(state.playerTwo.board.getShips().length).toEqual(5);
-      expect(state.activePlayer).toEqual(state.playerOne);
     });
 
-    test("initializeGame rendered 2 boards for 2 players successfully", () => {
+    test("initPlayers does NOT render boards yet", () => {
+      expect(DomManager.renderBoard).not.toHaveBeenCalled();
+    });
+  });
+  describe("tests for startGame", () => {
+    let state;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      gameController.initPlayers("Harsh");
+      state = gameController.state;
+      gameController.startGame();
+    });
+
+    test("startGame rendered 2 boards for 2 players successfully", () => {
       expect(DomManager.renderBoard).toHaveBeenCalledTimes(2);
 
       expect(DomManager.renderBoard).toHaveBeenCalledWith(
@@ -77,6 +93,13 @@ describe("tests for gameController", () => {
         true
       );
     });
+
+    test("startGame binds events to computer board", () => {
+      expect(DomManager.bindEvents).toHaveBeenCalledWith(
+        "computer-board",
+        expect.any(Function)
+      );
+    });
   });
 
   describe("playRound (Human Turn)", () => {
@@ -84,10 +107,8 @@ describe("tests for gameController", () => {
 
     beforeEach(() => {
       jest.clearAllMocks();
-      jest
-        .spyOn(gameController, "playComputerTurn")
-        .mockImplementation(() => {});
-      gameController.initializeGame("Harsh");
+      gameController.initPlayers("Harsh");
+      gameController.startGame();
       state = gameController.state;
     });
 
@@ -143,7 +164,7 @@ describe("tests for gameController", () => {
         null
       );
       expect(state.activePlayer).toBe(state.playerTwo);
-      expect(gameController.playComputerTurn).toHaveBeenCalled();
+      expect(DomManager.disableBoard).toHaveBeenCalledWith("computer-board");
     });
 
     describe("playRound - successful hits", () => {
@@ -182,7 +203,7 @@ describe("tests for gameController", () => {
           mockCoords
         );
         expect(state.activePlayer).toBe(state.playerTwo);
-        expect(gameController.playComputerTurn).toHaveBeenCalled();
+        expect(DomManager.disableBoard).toHaveBeenCalledWith("computer-board");
       });
 
       test("winning hit: updates UI, ends game, DOES NOT call computer turn", () => {
@@ -192,7 +213,7 @@ describe("tests for gameController", () => {
 
         expect(state.isGameOver).toBe(true);
         expect(state.activePlayer).toBe(state.playerOne);
-        expect(gameController.playComputerTurn).not.toHaveBeenCalled();
+        expect(DomManager.disableBoard).not.toHaveBeenCalled();
       });
     });
   });
@@ -201,7 +222,7 @@ describe("tests for gameController", () => {
     let state;
 
     test("playComputerTurn sets isProcessing to true and disables the computer-board", () => {
-      gameController.initializeGame("Harsh");
+      gameController.initPlayers("Harsh");
       state = gameController.state;
       gameController.playComputerTurn();
       expect(state.isProcessing).toEqual(true);
@@ -214,7 +235,8 @@ describe("tests for gameController", () => {
       beforeEach(() => {
         jest.clearAllMocks();
         jest.useFakeTimers();
-        gameController.initializeGame("Harsh");
+        gameController.initPlayers("Harsh");
+        gameController.startGame();
         state = gameController.state;
 
         attackSpy = jest

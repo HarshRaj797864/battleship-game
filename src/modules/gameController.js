@@ -13,9 +13,11 @@ export const gameController = (() => {
   };
 
   const placeShipsRandomly = (player) => {
-    [5, 4, 3, 3, 2].forEach((len) => {
+    const fleet = [5, 4, 3, 3, 2];
+    fleet.forEach((len) => {
       let placed = false;
-      while (!placed) {
+      let attempts = 0;
+      while (!placed && attempts < 100) {
         const x = Math.floor(Math.random() * 10);
         const y = Math.floor(Math.random() * 10);
         const isVertical = Math.random() < 0.5;
@@ -23,7 +25,7 @@ export const gameController = (() => {
           player.board.placeShip(new Ship(len), x, y, isVertical);
           placed = true;
         } catch {
-          console.log("not allowed");
+          attempts++;
         }
       }
     });
@@ -32,7 +34,7 @@ export const gameController = (() => {
   const initPlayers = (name) => {
     state.playerOne = getPlayer(name, "human");
     state.playerTwo = getPlayer("computer", "computer");
-    placeShipsRandomly(state.playerTwo); // Computer ships only
+    placeShipsRandomly(state.playerTwo);
     return state.playerOne;
   };
 
@@ -106,9 +108,19 @@ export const gameController = (() => {
     state.playerTwo = null;
     state.isGameOver = false;
     state.activePlayer = null;
-    document.getElementById("player-board").innerHTML = "";
-    document.getElementById("computer-board").innerHTML = "";
+    const p1Board = document.getElementById("player-board");
+    const p2Board = document.getElementById("computer-board");
+    if (p1Board) p1Board.innerHTML = "";
+    if (p2Board) p2Board.innerHTML = "";
   };
 
-  return { initPlayers, startGame, playRound, resetGame };
+  return {
+    initPlayers,
+    startGame,
+    playRound,
+    playComputerTurn,
+    placeShipsRandomly,
+    resetGame,
+    state,
+  };
 })();
