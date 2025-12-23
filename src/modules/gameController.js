@@ -54,15 +54,22 @@ export const gameController = (() => {
       const coords = state.playerOne.board.getAttackedShots();
       const shotStatus = coords.at(-1);
       let ship;
+      let shipCoords;
 
       if (shotStatus.missed === false) {
         ship = state.playerOne.board.getShipAt(shotStatus.x, shotStatus.y);
+      }
+      if (ship && ship.isSunk()) {
+        shipCoords = state.playerOne.board.getShipCoordinates(ship);
+      } else {
+        shipCoords = null;
       }
       DomManager.updateCell(
         "player-board",
         shotStatus.x,
         shotStatus.y,
-        ship && ship.isSunk() ? coords : null
+        !shotStatus.missed,
+        shipCoords
       );
       if (!state.playerOne.board.allShipSunk()) {
         state.activePlayer = state.playerOne;
