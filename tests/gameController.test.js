@@ -9,6 +9,7 @@ jest.mock("../src/modules/DomManager", () => ({
     disableBoard: jest.fn(),
     enableBoard: jest.fn(),
     bindEvents: jest.fn(),
+    renderFleet: jest.fn(),
   },
 }));
 jest.mock("../src/modules/ScreenController", () => ({
