@@ -1,0 +1,109 @@
+#setup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: white;
+}
+
+.setup-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.harbor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 300px;
+}
+
+.harbor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid hsl(0, 0%, 90%);
+  padding-bottom: 1rem;
+}
+
+.harbor-header h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.harbor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: hsl(205, 30%, 96%);
+  border: 2px dashed hsl(205, 20%, 80%);
+  border-radius: 1rem;
+  min-height: 350px;
+}
+
+.ship-draggable {
+  background-color: var(--color-ship);
+  height: var(--cell-size);
+  cursor: grab;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s, opacity 0.2s;
+  transform-origin: top left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.ship-draggable:active {
+  cursor: grabbing;
+}
+
+.ship-draggable.dragging {
+  opacity: 0.4;
+  border: 2px dashed black;
+}
+
+.cell.hover-valid {
+  background-color: rgba(76, 175, 80, 0.6) !important;
+  position: relative;
+}
+
+.cell.hover-valid::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 2px dashed white;
+}
+
+.cell.hover-invalid {
+  background-color: rgba(244, 67, 54, 0.6) !important;
+  cursor: not-allowed;
+}
+
+#rotate-btn {
+  min-width: 120px;
+  font-size: 1.2rem;
+}
+
+#finish-setup-btn {
+  margin-top: 2rem;
+  max-width: 300px;
+  transition: all 0.3s;
+}
+
+#finish-setup-btn.disabled {
+  background-color: hsl(0, 0%, 80%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}

@@ -1,73 +1,448 @@
-/* we use :root pseudo-class to target highest level DOM element to be able to declare CSS custom properties */
 :root {
-    font-size: 62.5%; /*basically makes 1 rem = 10px*/
-    /* most preferred approach would be to use scss functions to convert px values to rem keeping default size as 16px, would implement it later */
-    /* a unitless value is preferred for better inheritance, now the vertical spacing between the lines is 1.5 * parent's font-size  */
-    line-height: 1.5; 
-    /* a css custom-property is used to specify system font-stack for faster loading */
-    --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+  font-size: 62.5%;
+  line-height: 1.5;
+  --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-water: hsl(205, 87%, 94%);
+  --color-ship: hsl(207, 90%, 77%);
+  --color-hit: hsl(1, 83%, 63%);
+  --color-miss: hsl(0, 0%, 74%);
+  --color-sunk: hsl(0, 0%, 5%);
+  --cell-size: 5rem;
 }
 
 body {
-    /* default style is 16px = 1.6rem * 10 px */
-    font-size: 1.6rem;
-    /* WebKit-based browsers like Chrome, Safari, Edge on macOS  */
-    /* to make the font thinner and lighter */
-    -webkit-font-smoothing: antialiased;
-    /* background-color: aquamarine; */
+  font-size: 1.6rem;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
 }
 
 *, *::before, *::after {
-    box-sizing: border-box;
-}
-
-* {
-    margin: 0;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 img, picture, svg, video, canvas {
-    /* block */
-    display: block;
-    /* equivalent to max-width but also applicable for vertical flow, ensures the content does not overflow parent container and if the image is too large it will scale-down to fit the container  */
-    max-inline-size: 100%;
-    /* max-inline-size is a modern alternative to max-width and for maximum compatibility use of both is preferred */
-    max-width: 100%;
+  display: block;
+  max-width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-size: inherit;
-    font-weight: inherit;
-    /* for more balanced text-wrap ensures only single word is not left on the last line */
-    text-wrap: balance;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
-    overflow-wrap: break-word;
+  font: inherit;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 p {
-    text-wrap: pretty;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
 input, button, textarea, select {
-    font: inherit;
+  font: inherit;
 }
 
-ol[role="list"], ul[role="list"] {
-    list-style: none;
-    padding-inline: 0;
+ul[role="list"], ol[role="list"] {
+  list-style: none;
+  padding: 0;
 }
 
-/* smoothly animating height change */
 @media (prefers-reduced-motion: no-preference) {
-  html {
-    interpolate-size: allow-keywords;
-  }
+  html { interpolate-size: allow-keywords; }
 }
 
-/*
-  12. Create a stacking context for React/Next.js apps.
-*/
-#root, #__next {
-  isolation: isolate;
+#root, #__next { isolation: isolate; }
+
+/* --- GAME BOARD LAYOUT --- */
+#game-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#game-container h1 {
+  font-size: 5rem;
+  font-weight: 800;
+  margin: auto;
+}
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 400;
+  justify-self: center;
+}
+
+.board-section {
+  display: flex;
+  justify-content: space-around;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, var(--cell-size));
+  grid-template-rows: repeat(10, var(--cell-size));
+  gap: 1px;
+  background-color: hsl(0, 0%, 80%);
+  border: 2px solid hsl(0, 0%, 20%);
+}
+
+.cell {
+  background-color: var(--color-water);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.cell:hover { opacity: 0.8; }
+.cell.ship { background-color: var(--color-ship); }
+.cell.hit { background-color: var(--color-hit); }
+.cell.miss { background-color: var(--color-miss); }
+.cell.sunk { background-color: var(--color-sunk); }
+
+.board.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%) brightness(0.8);
+}
+
+.hidden { display: none !important; }
+
+/* --- PHASE 3: MODALS & FORMS --- */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+dialog {
+  margin: auto;
+  border: none;
+  border-radius: 1rem;
+  padding: 3rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  background-color: white;
+  color: var(--color-sunk);
+  font-family: 'Noto Sans', sans-serif;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+dialog[open] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 900;
+  color: var(--color-sunk);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+label { font-size: 1.4rem; font-weight: 700; }
+
+input[type="text"] {
+  padding: 1rem;
+  border: 2px solid hsl(0, 0%, 80%);
+  border-radius: 0.5rem;
+  font-size: 1.6rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus { border-color: var(--color-ship); }
+input.invalid { border-color: var(--color-hit); }
+
+.error-message {
+  font-size: 1.2rem;
+  color: var(--color-hit);
+  min-height: 1.5rem;
+  font-weight: 700;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 1.2rem;
+  background-color: var(--color-ship);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.btn-primary:hover { filter: brightness(0.9); }
+
+
+
+
+
+
+
+/* --- GLOBAL UI & DROPDOWNS --- */
+#global-ui {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.dropdown { position: relative; display: inline-block; }
+
+.btn-secondary {
+  background: white;
+  border: 2px solid var(--color-sunk);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 110%;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-radius: 0.5rem;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid hsl(0, 0%, 90%);
+}
+
+.dropdown-content.show {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-content button {
+  background: none;
+  border: none;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.4rem;
+  width: 100%;
+}
+
+.dropdown-content button:hover { background-color: hsl(0, 0%, 95%); }
+
+/* --- PHASE 3.4: RETRO THEME --- */
+body.retro {
+  --color-water: #000000;
+  --color-ship: #33ff00;
+  --color-hit: #ff0000;
+  --color-miss: #333333;
+  --color-sunk: #004400;
+  background-color: #1a1a1a;
+  color: #33ff00;
+  font-family: 'Courier New', Courier, monospace;
+  background-image: none;
+}
+
+body.retro h1, body.retro h2, body.retro p, body.retro label {
+  color: #33ff00;
+  text-shadow: 0 0 5px #33ff00;
+}
+
+body.retro .cell { border: 1px solid #333; }
+body.retro .board { border-color: #33ff00; }
+
+body.retro .btn-primary {
+  background-color: transparent;
+  color: rgb(247, 244, 244);
+  border-radius: 0;
+}
+
+body.retro dialog {
+  background-color: black;
+  border: 2px solid #33ff00;
+  color: #33ff00;
+  border-radius: 0;
+}
+
+/* --- GLOBAL BUTTON FILL ANIMATION (CENTER-OUT) --- */
+
+/* 1. Base settings for ALL buttons */
+.btn-primary, 
+.btn-secondary, 
+#start-btn, 
+#restart-btn, 
+#finish-setup-btn, 
+#rotate-btn,
+#settings-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1; /* Establishes stacking context */
+  transition: color 0.4s ease-in-out, border-color 0.4s ease;
+  vertical-align: middle;
+}
+
+/* 2. The "Hidden" Fill Layer */
+.btn-primary::before, 
+.btn-secondary::before, 
+#start-btn::before, 
+#restart-btn::before, 
+#finish-setup-btn::before, 
+#rotate-btn::before,
+#settings-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Default Fill Color (Dark for Ocean Theme) */
+  background-color: var(--color-sunk); 
+  
+  /* ANIMATION LOGIC: Center Out */
+  transform: scaleX(0); 
+  transform-origin: center; /* This makes it grow from the middle */
+  
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: -1; /* Sits behind text, but on top of button background */
+}
+
+/* 3. The Hover Trigger */
+.btn-primary:hover::before, 
+.btn-secondary:hover::before, 
+#start-btn:hover::before, 
+#restart-btn:hover::before, 
+#finish-setup-btn:hover::before, 
+#rotate-btn:hover::before,
+#settings-btn:hover::before {
+  transform: scaleX(1); /* Expands sideways from center */
+}
+
+/* 4. Text & Border Color on Hover */
+.btn-primary:hover, 
+.btn-secondary:hover, 
+#start-btn:hover,
+#rotate-btn:hover,
+#settings-btn:hover {
+  color: white;
+  border-color: var(--color-sunk);
+}
+
+/* --- RETRO THEME ANIMATION OVERRIDES --- */
+
+/* 5. Force the Fill Color to Neon Green in Retro Mode */
+body.retro .btn-primary::before, 
+body.retro .btn-secondary::before, 
+body.retro #start-btn::before,
+body.retro #restart-btn::before,
+body.retro #finish-setup-btn::before,
+body.retro #rotate-btn::before,
+body.retro #settings-btn::before {
+  background-color: var(--color-ship) !important; /* Force Green Fill */
+}
+
+/* 6. Force Text to Black on Hover in Retro Mode */
+body.retro .btn-primary:hover, 
+body.retro .btn-secondary:hover, 
+body.retro #start-btn:hover,
+body.retro #rotate-btn:hover,
+body.retro #settings-btn:hover {
+  color: black !important; /* Black text on Green Fill */
+  border-color: var(--color-ship) !important;
+  box-shadow: 0 0 15px var(--color-ship); /* Glow */
+}
+
+
+#settings-btn {
+  background-color: transparent;
+  border: none;                 
+  color: white;                  
+  
+  
+  width: 5rem;                   
+  height: 5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#settings-btn svg {
+  width: 9rem;  
+  height: 9rem;
+  transition: transform 0.3s ease; 
+}
+
+#settings-btn:hover {
+  color: var(--color-ship); 
+  transform: rotate(90deg); 
+}
+
+
+
+#settings-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+/* --- GITHUB FLOATING ICON --- */
+
+
+#github-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  
+  
+  text-decoration: none;
+  background-color: transparent;
+  
+  
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  
+  color: white; 
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#github-btn svg {
+  width: 9rem;
+  height: 9rem;
+  fill: currentColor; 
+}
+
+
+#github-btn:hover {
+  color: var(--color-ship); 
+  transform: rotate(360deg); 
+}
+
+
+
+
+body.retro #settings-btn,
+body.retro #github-btn {
+  color: #33ff00;
+}
+
+
+body.retro #settings-btn:hover,
+body.retro #github-btn:hover {
+  color: #33ff00;
+  text-shadow: 0 0 10px #33ff00;
+  filter: drop-shadow(0 0 5px #33ff00);
 }
