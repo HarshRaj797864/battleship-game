@@ -155,3 +155,91 @@
   /* Compensate for the empty space left by scaling */
   margin-bottom: -50px;
 }
+
+/* --- GAME OVER MODAL BASE (Ocean Theme) --- */
+#game-over-modal {
+  background: rgba(11, 17, 22, 0.95); /* Deep Dark Blue transparent */
+  border: 2px solid #3d5a80;
+  border-radius: 15px;
+  color: white;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+
+  /* Centering logic provided by browser default <dialog>, but let's ensure text aligns */
+  text-align: center;
+}
+
+#game-over-modal::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px); /* Blurs the game board behind it */
+}
+
+.modal-content {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+#winner-display {
+  font-family: "Zen Dots", sans-serif;
+  font-size: 3rem;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+#game-over-modal p {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 1.2rem;
+  color: #a0a0a0;
+}
+
+/* --- RETRO THEME OVERRIDE (The "Fix") --- */
+body.retro #game-over-modal {
+  background-color: black;
+  border: 2px solid #33ff00; /* Neon Green Border */
+  box-shadow:
+    0 0 20px rgba(51, 255, 0, 0.2),
+    inset 0 0 20px rgba(51, 255, 0, 0.1);
+  border-radius: 0; /* Sharp corners for retro look */
+}
+
+body.retro #game-over-modal::backdrop {
+  background: rgba(0, 20, 0, 0.85); /* Greenish Tint Backdrop */
+  background-image:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+  background-size:
+    100% 2px,
+    3px 100%; /* Fake Scanlines */
+}
+
+body.retro #winner-display {
+  color: #33ff00;
+  text-shadow:
+    2px 2px 0px #000,
+    -1px -1px 0 #000,
+    0 0 15px #33ff00; /* Green Glow */
+  text-transform: uppercase;
+}
+
+body.retro #game-over-modal p {
+  color: #33ff00;
+  font-family: "Courier New", monospace;
+  opacity: 0.8;
+}
+
+/* Ensure the button matches the retro vibe (already handled by your global button CSS, but just in case) */
+body.retro #restart-btn {
+  margin-top: 1rem;
+  width: 100%;
+}
