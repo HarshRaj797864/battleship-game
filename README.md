@@ -76,6 +76,9 @@ Testing is done using **Jest**.
 Live version (GitHub Pages):
 `https://battle-ship67.netlify.app/`
 
+
+
+
 ---
 
 ## Running Locally
@@ -109,6 +112,9 @@ This project is intentionally not framework-heavy so that the focus stays on fun
 ---
 
 ## Possible Improvements
+
+<<<<<<< HEAD
+=======
 
 * Better animations and UI polish
 * Multiplayer support
