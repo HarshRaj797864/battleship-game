@@ -1,0 +1,113 @@
+/* =========================================
+   MOBILE RESPONSIVENESS OVERHAUL
+   (Paste at the bottom of your CSS)
+   ========================================= */
+
+/* 1. GLOBAL MOBILE RESETS */
+@media (max-width: 768px) {
+  html,
+  body {
+    font-size: 14px; /* Slightly smaller base font */
+    overflow-x: hidden; /* Prevent horizontal scrollbar */
+    width: 100vw;
+  }
+
+  /* Fix Title Sizes */
+  .main-title,
+  .glitch-title {
+    font-size: clamp(2.5rem, 8vw, 4rem) !important; /* Responsive scaling */
+    line-height: 1.1;
+  }
+
+  #start-game-wrapper h1 {
+    font-size: 3.5rem !important; /* Force start screen title to fit */
+  }
+}
+
+/* 2. SETUP SCREEN FIXES (Drag & Drop) */
+@media (max-width: 1000px) {
+  .setup-content {
+    flex-direction: column-reverse; /* Put Board ON TOP, Ships BELOW */
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  /* Shrink the Setup Board */
+  #setup-board {
+    transform: scale(0.65); /* Shrink significantly */
+    transform-origin: center top;
+    margin-bottom: -80px; /* Remove the dead space created by scaling */
+  }
+
+  /* Make the Harbor (Ship list) scrollable sideways instead of huge list */
+  .harbor-section {
+    width: 95%;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5); /* Make it distinct */
+    border-radius: 10px;
+  }
+
+  #fleet-harbor {
+    display: flex;
+    flex-direction: row; /* Horizontal list */
+    flex-wrap: wrap; /* Allow wrapping if needed */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Make draggable ships smaller */
+  .ship-draggable {
+    transform: scale(0.8);
+    margin: 0 !important;
+  }
+}
+
+/* 3. BATTLEFIELD FIXES (Combat Mode) */
+@media (max-width: 1000px) {
+  #game-container {
+    padding: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .battlefield {
+    flex-direction: column; /* Stack boards vertically */
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Mobile Boards */
+  .tactical-board {
+    transform: scale(0.65); /* 65% size for phones */
+    transform-origin: top center;
+    margin-bottom: -90px; /* Pull them closer together */
+  }
+
+  .status-btn {
+    max-width: 300px; /* Smaller headers */
+    font-size: 1.2rem;
+    height: 40px;
+  }
+}
+
+/* 4. MODAL FIXES (Game Over / Start) */
+@media (max-width: 768px) {
+  dialog {
+    width: 95% !important;
+    max-width: 95% !important;
+    padding: 1rem;
+  }
+
+  #winner-display {
+    font-size: 2.5rem !important;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  /* Input field on Start Modal */
+  .input-group input {
+    width: 100%;
+  }
+}
