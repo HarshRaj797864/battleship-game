@@ -243,3 +243,67 @@ body.retro #restart-btn {
   margin-top: 1rem;
   width: 100%;
 }
+
+/* --- 1. STATUS BUTTONS ("Friendly Waters" / "Enemy Waters") --- */
+.status-btn {
+  width: 100%;
+  max-width: 400px;
+  height: 50px;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  cursor: default !important;
+  pointer-events: none;
+
+  /* NEW TEXT STYLES */
+  font-family:
+    "Noto Sans", sans-serif; /* Or 'Zen Dots' if you prefer tech look */
+  font-size: 1.5rem; /* Increased from default */
+  font-weight: 800; /* Extra Bold */
+  letter-spacing: 2px; /* Tactical spacing */
+  text-transform: uppercase;
+
+  /* Flex centering to ensure text is perfectly in the middle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- 2. HINT TEXT ("Systems Online" / "Target Locked") --- */
+.click-hint {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 1.2rem; /* Increased visibility */
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+/* --- 3. GAME OVER MODAL TEXT --- */
+#winner-display {
+  font-family: "Zen Dots", sans-serif;
+  font-size: 4.5rem; /* Massive size for the winner text */
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  margin: 0;
+  line-height: 1.2;
+}
+
+#game-over-modal p {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 1.6rem; /* Much larger subtext */
+  color: #a0a0a0;
+  margin-top: 1rem;
+}
+
+/* Retro Override for Game Over Text */
+body.retro #winner-display {
+  text-shadow:
+    2px 2px 0px #000,
+    -1px -1px 0 #000,
+    0 0 20px #33ff00;
+}
+
+body.retro #game-over-modal p {
+  font-size: 1.4rem; /* Slightly smaller in retro to keep terminal look */
+  font-family: "Courier New", monospace;
+}
