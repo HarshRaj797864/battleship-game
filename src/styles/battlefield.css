@@ -33,7 +33,7 @@
 .battlefield {
   display: flex;
   flex-direction: row; /* Side by side */
-  gap: 5rem; /* Large gap between player and enemy */
+  gap: 2rem; /* Large gap between player and enemy */
   align-items: flex-start;
   justify-content: center;
   width: 100%;
@@ -143,4 +143,15 @@
 /* 3. SUNK (Dark Red Overlay) */
 .cell.sunk {
   background-color: rgba(100, 0, 0, 0.6) !important;
+}
+
+/* src/styles/battlefield.css */
+
+.tactical-board {
+  /* Shrink the board to 80% of its original size */
+  transform: scale(0.8);
+  transform-origin: top center; /* Keep it anchored to the top */
+
+  /* Compensate for the empty space left by scaling */
+  margin-bottom: -50px;
 }

@@ -9,10 +9,10 @@ The main focus of this project is correctness, clarity of logic, and testability
 
 ## What I Built
 
-* A complete turn-based Battleship game playable in the browser
-* Core game logic implemented first using **Test-Driven Development (TDD)**
-* A simple UI layer that renders the game state without mixing logic and DOM code
-* A computer player with basic intelligence (not purely random)
+- A complete turn-based Battleship game playable in the browser
+- Core game logic implemented first using **Test-Driven Development (TDD)**
+- A simple UI layer that renders the game state without mixing logic and DOM code
+- A computer player with basic intelligence (not purely random)
 
 ---
 
@@ -39,8 +39,8 @@ Game logic is kept completely separate from the DOM so it can be tested independ
 
 The computer player works in two stages:
 
-* **Random search**: attacks random valid cells
-* **Target mode**: after hitting a ship, it checks adjacent cells to determine the ship’s orientation and continues attacking along that axis until the ship is sunk
+- **Random search**: attacks random valid cells
+- **Target mode**: after hitting a ship, it checks adjacent cells to determine the ship’s orientation and continues attacking along that axis until the ship is sunk
 
 This makes the computer’s behavior closer to how a human would play.
 
@@ -48,14 +48,13 @@ This makes the computer’s behavior closer to how a human would play.
 
 ## Testing
 
-* All core game logic was written using **TDD**
-* Tests were written before implementation
-* Edge cases are explicitly covered, including:
-
-  * overlapping ship placement
-  * attacking the same cell twice
-  * out-of-bounds placement
-  * detecting when all ships are sunk
+- All core game logic was written using **TDD**
+- Tests were written before implementation
+- Edge cases are explicitly covered, including:
+  - overlapping ship placement
+  - attacking the same cell twice
+  - out-of-bounds placement
+  - detecting when all ships are sunk
 
 Testing is done using **Jest**.
 
@@ -63,11 +62,11 @@ Testing is done using **Jest**.
 
 ## Tools Used
 
-* JavaScript (ES6+)
-* Jest (unit testing)
-* Webpack (bundling and dev server)
-* Babel
-* ESLint & Prettier
+- JavaScript (ES6+)
+- Jest (unit testing)
+- Webpack (bundling and dev server)
+- Babel
+- ESLint & Prettier
 
 ---
 
@@ -75,9 +74,6 @@ Testing is done using **Jest**.
 
 Live version (GitHub Pages):
 `https://battle-ship67.netlify.app/`
-
-
-
 
 ---
 
@@ -102,10 +98,10 @@ npm test
 
 I built this project to improve my understanding of:
 
-* writing testable JavaScript code
-* modeling game state cleanly
-* separating logic from UI
-* using proper Git workflow for a non-trivial project
+- writing testable JavaScript code
+- modeling game state cleanly
+- separating logic from UI
+- using proper Git workflow for a non-trivial project
 
 This project is intentionally not framework-heavy so that the focus stays on fundamentals.
 
@@ -113,9 +109,5 @@ This project is intentionally not framework-heavy so that the focus stays on fun
 
 ## Possible Improvements
 
-<<<<<<< HEAD
-=======
-
-* Better animations and UI polish
-* Multiplayer support
-
+- Better animations and UI polish
+- Multiplayer support
